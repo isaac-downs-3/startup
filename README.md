@@ -2,7 +2,12 @@
 
 [My Notes](notes.md)
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Axon Trading House is a proprietary trading firm buying and selling public securities: equities, options, and bonds. The purpose of this application is to focus on the options analysis. The current plan for the program is below. 
+A responsive web application for analyzing options chains, built with HTML, CSS, and JavaScript and usable from desktop or phone. React drives the interface: users select a symbol and expiration, browse the chain as a table or interactive volatility surface, and click strikes to build multi-leg positions that update payoff diagrams, breakevens, and aggregate Greeks in real time.
+
+A Node service provides endpoints for authentication and for fetching, normalizing, and analyzing chain data. MongoDB persists user accounts, watchlists, and saved positions. WebSocket pushes live quote and Greek updates to every open client as prices move.
+
+Chain data will be synthetically generated using options-pricing models, so there's no need to pay and it can be used publicly. 
 
 > [!NOTE]
 > This is a template for your startup application. You must modify this `README.md` file for each phase of your development. You only need to fill in the section for each deliverable when that deliverable is submitted in Canvas. Without completing the section for a deliverable, the TA will not know what to look for when grading your submission. Feel free to add additional information to each deliverable description, but make sure you at least have the list of rubric items and a description of what you did for each item.
