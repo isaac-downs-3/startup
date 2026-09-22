@@ -104,16 +104,16 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - A link to this GitHub repository is in the footer of every page, including the home page. The work is spread across many small commits. Simon HTML deployment is pending.
+- [x] **HTML pages** - Five pages, one per component: `index.html` (login), `screener.html` (the metric screener), `metrics.html` (the metric definitions), `watchlist.html` (saved tickers and screener setups), and `about.html`.
+- [x] **Proper HTML element usage** - Every page uses `body` with `header`, `nav`, `main`, and `footer`. The screener and metric definitions are real `table` elements with `thead`, `tbody`, `caption`, and `th scope`. The controls use `form`, `fieldset`, `legend`, `label`, `select`, radio buttons, and checkboxes. Formulas use `details`/`summary`, coverage uses `meter`, and page sections use `section` and `aside`.
+- [x] **Links** - The `nav` on every page links to all five pages. Logging in on `index.html` goes to the screener. The screener links to the Metrics page, and each saved setup on the Watchlist links to the screener.
+- [x] **Text** - Each page explains itself. The screener explains columns, sorting, ranks, and what a dash means. The Metrics page defines coverage, kind, and grain. The About page explains why metrics are defined in the open and how a metric is built. Pages with sample data carry a "sample data, not investment advice" notice.
+- [x] **3rd party API placeholder** - The screener's Data source box names [Finnhub](https://finnhub.io/docs/api) as the source for quotes and financial statement fields, marked as not yet connected. Each raw field on the Metrics page is labeled "Raw field from Finnhub".
+- [x] **Images** - `logo.svg` is in the header of every page. `metric-flow.svg` on the About page diagrams raw fields feeding metrics feeding the screener.
+- [x] **Login placeholder** - `index.html` has a username and password form with Log in and Create account buttons. Every other page shows "Signed in as: analyst" in the header.
+- [x] **DB data placeholder** - The Watchlist page shows the saved tickers and saved screener setups stored in the database for the user. The Metrics page's coverage values are computed from stored data.
+- [x] **WebSocket placeholder** - The screener's Live updates list shows timestamped price moves pushed from the server and how they change price-driven metrics such as price / earnings.
 
 ## 🚀 CSS deliverable
 
