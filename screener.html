@@ -31,6 +31,40 @@
         computed because an input was missing.
       </p>
       <p><i>All values on this page are sample data for illustration only. Not investment advice.</i></p>
+
+      <form method="get" action="screener.html">
+        <fieldset>
+          <legend>Screen</legend>
+          <p>
+            <label for="filter">Filter tickers</label>
+            <input type="search" id="filter" name="filter" placeholder="AAPL, MSFT..." />
+          </p>
+          <p>
+            Show:
+            <input type="radio" id="view-values" name="view" value="values" checked />
+            <label for="view-values">Values</label>
+            <input type="radio" id="view-ranks" name="view" value="ranks" />
+            <label for="view-ranks">Ranks</label>
+          </p>
+          <p>
+            <label for="sort">Sort by</label>
+            <select id="sort" name="sort">
+              <option value="eps_ttm">EPS, trailing twelve months</option>
+              <option value="net_margin" selected>Net margin</option>
+              <option value="net_margin_pct">Net margin percentile vs own history</option>
+              <option value="revenue_yoy">Revenue growth, year over year</option>
+              <option value="fcf_margin">Free cash flow margin</option>
+              <option value="pe">Price / earnings</option>
+              <option value="pe_pct">P/E percentile vs own history</option>
+            </select>
+            <input type="radio" id="order-desc" name="order" value="desc" checked />
+            <label for="order-desc">High to low</label>
+            <input type="radio" id="order-asc" name="order" value="asc" />
+            <label for="order-asc">Low to high</label>
+          </p>
+        </fieldset>
+        <button type="submit">Apply</button>
+      </form>
     </main>
 
     <footer>
