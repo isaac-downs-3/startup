@@ -2,3 +2,4 @@ production.pem
 .claude/settings.local.json
 .env
 CLAUDE.md
+.DS_Store
