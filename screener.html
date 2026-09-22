@@ -63,6 +63,34 @@
             <label for="order-asc">Low to high</label>
           </p>
         </fieldset>
+        <fieldset>
+          <legend>Columns (7 of 12 metrics)</legend>
+          <p>Any metric defined on the <a href="metrics.html">Metrics</a> page can be a column.</p>
+          <input type="checkbox" id="col-eps_ttm" name="columns" value="eps_ttm" checked />
+          <label for="col-eps_ttm">EPS, trailing twelve months</label><br />
+          <input type="checkbox" id="col-net_margin" name="columns" value="net_margin" checked />
+          <label for="col-net_margin">Net margin</label><br />
+          <input type="checkbox" id="col-net_margin_pct" name="columns" value="net_margin_pct" checked />
+          <label for="col-net_margin_pct">Net margin percentile vs own history</label><br />
+          <input type="checkbox" id="col-revenue_yoy" name="columns" value="revenue_yoy" checked />
+          <label for="col-revenue_yoy">Revenue growth, year over year</label><br />
+          <input type="checkbox" id="col-fcf_margin" name="columns" value="fcf_margin" checked />
+          <label for="col-fcf_margin">Free cash flow margin</label><br />
+          <input type="checkbox" id="col-pe" name="columns" value="pe" checked />
+          <label for="col-pe">Price / earnings</label><br />
+          <input type="checkbox" id="col-pe_pct" name="columns" value="pe_pct" checked />
+          <label for="col-pe_pct">P/E percentile vs own history</label><br />
+          <input type="checkbox" id="col-gross_margin" name="columns" value="gross_margin" />
+          <label for="col-gross_margin">Gross margin</label><br />
+          <input type="checkbox" id="col-roe" name="columns" value="roe" />
+          <label for="col-roe">Return on equity</label><br />
+          <input type="checkbox" id="col-debt_to_equity" name="columns" value="debt_to_equity" />
+          <label for="col-debt_to_equity">Debt / equity</label><br />
+          <input type="checkbox" id="col-dividend_yield" name="columns" value="dividend_yield" />
+          <label for="col-dividend_yield">Dividend yield</label><br />
+          <input type="checkbox" id="col-market_cap" name="columns" value="market_cap" />
+          <label for="col-market_cap">Market capitalization</label>
+        </fieldset>
         <button type="submit">Apply</button>
       </form>
     </main>
