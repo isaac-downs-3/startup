@@ -37,6 +37,20 @@ Automatically playing audio is strongly discouraged.
 Document Object Model (DOM) turns HTML into a tree structure the machine can parse. The DOM is what JavaScript and CSS interact with to do their work. 
 Inspect or view source after right-clicking to see the code backbone of any website. 
 
+### From building the startup HTML
+
+Every page shares the same frame: header, nav, main, footer. Copying that frame into each page is the cost of having no templating yet — React components fix this later.
+With no JavaScript, a form's action attribute is the navigation: the login form's action="screener.html" is what "logs in".
+A GET form puts every named input in the URL. An input without a name attribute is not submitted, which keeps the placeholder password out of the address bar.
+A button can submit a form it isn't inside by using form="form-id".
+Tables: thead/tbody, th scope="col" for column headers, th scope="row" for the ticker in each row, and caption to describe the table.
+details/summary gives a collapsible section with no JavaScript — used for each metric's formula.
+meter shows a value within a known range (coverage from 0 to 1); progress is for a task completing.
+abbr title="..." gives a hover tooltip — used to explain why a value is missing.
+fieldset + legend group related form controls; label for="id" ties a label to its input.
+img needs alt text. SVG files work as images and stay sharp at any size.
+deployFiles.sh copies everything in the folder (scp -r *) to the server, so keys and anything private must live outside the project folder. Dotfiles are skipped by *.
+
 ## React
 
 Interesting things I have learned about React
