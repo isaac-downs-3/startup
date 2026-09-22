@@ -2,80 +2,84 @@
 
 [My Notes](notes.md)
 
-Axon Trading House is a proprietary trading firm buying and selling public securities: equities, options, and bonds. This application focuses on the options analysis side of the business: finding, ranking, and monitoring the option trades.
+Axon Trading House is a proprietary trading firm buying and selling public securities: equities, options, and bonds. This application focuses on the research side of the business: defining the metrics that matter, then screening, ranking, and monitoring companies against them.
 
 ### Elevator pitch
 
-Every options platform will happily tell you what a contract costs. Almost none of them will tell you whether it is worth buying. Traders end up eyeballing chains of hundreds of strikes, guessing at which expiration and which structure gives them an edge, and finding out weeks later that they were wrong. Axon Trading House flips that around. It scores an entire watchlist of tickers on **expected value** across four defined strategies at once, ranks them in a single screener, and lets you drill from a ticker into the expirations that carry the edge and then into the specific spreads that produce it. Prices and expected values update live as the market moves, so the ranking in front of you is the ranking right now, not the one from when the page loaded. Instead of hunting for a trade, you open Axon and the trades are already sorted best-first.
+Every stock screener hands you the same fixed list of numbers, computed some way you can't see. Analysts end up exporting to spreadsheets, rebuilding the metrics they actually care about, and re-sorting by hand every time a price moves. Axon Trading House flips that around. Every metric is **defined in the open**, on a Metrics page that shows its formula and the raw fields it is built from, so you know exactly what a number means before you rank on it. The screener lets you pick any set of those metrics as columns, filter the company list, and sort or rank on whichever one you care about. Prices and the metrics that depend on them update live as the market moves, so the ranking in front of you is the ranking right now, not the one from when the page loaded.
 
 ### Design
 
-The main view is a screener. A header names the page, a tab bar switches between views, and the body is a ranked grid: one row per ticker, one column per strategy, each cell holding that ticker's composite expected value for that strategy. Rows expand in place — clicking a ticker (`>`) opens its expected value broken out by days to expiration, and clicking an expiration (`>>`) opens the individual spreads that scored highest for that strategy and expiration. Sorting on any strategy column reorders the whole board, so the best opportunity for the structure you care about is always at the top.
+The application has two main views, reached from a navigation bar under the page header.
 
-The first sketch is the original wireframe that set the structure, and the second is the mockup built from it.
+The **Screener** is a table with one row per company and one column per selected metric. Above it, a filter narrows the company list, a column picker chooses which metrics to show, a sort control picks the metric and direction, and a Values / Ranks toggle switches each cell between the metric's value and the company's rank on it. A dash means a value could not be computed (a missing input), which is different from zero.
+
+The **Metrics** page is the dictionary behind the screener. Each row is one metric or raw data field: its display name, its identifier (for example `net_margin`), its kind (a computed metric, or a raw flow, stock, rate, or label field), its grain (annual or quarterly), and its coverage, meaning the share of companies that have a usable value. Opening a metric shows its formula and the raw fields it reads. Anything defined here can be chosen as a screener column.
+
+A **Watchlist** page holds each user's saved tickers and saved screener setups, and an **About** page explains how metrics are built.
+
+The sketches below are from the original options expected-value concept. The header, navigation, and ranked-table layout carried over into the metric screener.
 
 **Template**
 
-![Rough wireframe of the screener](screener-sketch.png)
+![Rough wireframe of the original screener concept](screener-sketch.png)
 
 **Screener mockup**
 
-![Mockup of the screener with a ticker and expiration expanded](screener-mockup.png)
-
-The mockup shows all three levels open at once: NVDA expanded into expected value by days to expiration, and its 30 DTE bucket expanded into the individual spreads behind that number. Values shown are sample data.
+![Mockup of the original options expected-value screener](screener-mockup.png)
 
 This sequence shows what happens when a user opens the screener and the market moves underneath them.
 
 ```mermaid
 sequenceDiagram
-    actor Trader
+    actor Analyst
     participant Client as React Client
     participant Service as Axon Service
-    participant Market as Finnhub / FRED
+    participant Market as Finnhub
     participant DB as MongoDB
 
-    Trader->>Client: Log in
+    Analyst->>Client: Log in
     Client->>Service: POST /api/auth/login
     Service->>DB: Verify credentials
     Service-->>Client: Auth cookie
-    Client->>Service: GET /api/screener
-    Service->>DB: Load watchlist tickers
-    Service->>Market: Fetch spot quotes and risk-free rate
-    Service->>Service: Generate chains, score EV by strategy
-    Service-->>Client: Ranked screener grid
-    Trader->>Client: Expand ticker, then expiration
-    Client->>Service: GET /api/ev/:symbol/:dte
-    Service-->>Client: Top EV spreads
-    Market--)Service: Spot price moves
-    Service--)Client: WebSocket EV update
-    Client->>Trader: Rows re-rank in place
+    Client->>Service: GET /api/metrics
+    Service-->>Client: Metric definitions
+    Analyst->>Client: Choose columns and sort metric
+    Client->>Service: GET /api/screener?columns=...&sort=...
+    Service->>DB: Load watchlist and saved settings
+    Service->>Market: Fetch quotes and financials
+    Service->>Service: Compute metrics and ranks
+    Service-->>Client: Screener table
+    Market--)Service: Price moves
+    Service--)Client: WebSocket metric update
+    Client->>Analyst: Rows re-rank in place
 ```
 
 ### Key features
 
 - Secure login over HTTPS, with each user's watchlist and settings stored server side
-- A ranked screener grid scoring every watched ticker against four strategies at once: **Short Condor, Long Straddle, Bear Call, and Bull Put**
-- Expandable rows that drill from a ticker's composite expected value, into expected value by days to expiration, into the specific top-EV spreads behind that number
-- Sortable strategy columns so the board reorders around whichever structure the trader is hunting
-- Per-user watchlists that persist between sessions and across devices
-- Live expected values pushed to every open client as spot prices move, so rankings re-sort without a refresh
-- Option chains generated from pricing models seeded with real spot prices and a real risk-free rate, which keeps the app free to run and public to use
+- A Metrics page that defines every metric in the open: name, identifier, kind, grain, coverage, formula, and the raw fields it is built from
+- A screener where the user picks any set of defined metrics as columns and filters the company list
+- Sorting and ranking on any metric, with a Values / Ranks toggle
+- Missing values shown as a dash with the reason, never silently treated as zero
+- Per-user watchlists and saved screener setups that persist between sessions and across devices
+- Live price-driven metrics (such as price / earnings) pushed to every open client as prices move, so rankings re-sort without a refresh
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Two HTML pages structured with correct semantic elements. One page for login and one for the application itself. The screener uses a real `table` for the ranked grid, `header` and `nav` for the title bar and tabs, and `details`/`summary` semantics for the expandable ticker and expiration rows.
-- **CSS** - Styling and animating the whole application. A dark trading-desk palette with color-coded expected values (positive green, negative red), an imported font, and a layout built on flexbox and grid so the screener stays readable on a phone by collapsing to fewer strategy columns. Row expansion and live value changes are animated so the trader can see what just moved.
-- **React** - The entire frontend is a single page application built from components: a login form, the tab bar, the screener grid, a ticker row, an expiration sub-row, and a spread detail row. React Router swaps between the login view and the screener, and later between tabs. Component state drives the expand/collapse behavior, column sorting, and re-rendering rows the moment new expected values arrive over the WebSocket.
+- **HTML** - Separate pages for login, the screener, the metrics dictionary, the watchlist, and about, structured with correct semantic elements: `header`, `nav`, `main`, and `footer` on every page, real `table` elements for the screener and the metric definitions, and `form`, `fieldset`, and `details`/`summary` for the controls and formula breakdowns.
+- **CSS** - Styling the whole application. A dark trading-desk palette with negative values in red, an imported font, and a layout built on flexbox and grid so the screener stays readable on a phone by showing fewer metric columns. Live value changes are animated so the analyst can see what just moved.
+- **React** - The frontend becomes a single page application built from components: a login form, the navigation bar, the screener controls, the screener table, the metrics table, and a metric detail view. React Router swaps between the views. Component state drives column selection, sorting, the Values / Ranks toggle, and re-rendering rows the moment new values arrive over the WebSocket.
 - **Service** - A Node/Express backend providing these endpoints:
   - `POST /api/auth/register`, `POST /api/auth/login`, `DELETE /api/auth/logout` for account management
-  - `GET /api/screener` returning the ranked ticker-by-strategy expected value grid
-  - `GET /api/ev/:symbol/:dte` returning the top expected value spreads for one ticker and expiration
-  - `GET /api/watchlist` and `PUT /api/watchlist` for reading and updating the user's tickers
-  - Third party calls to [Finnhub](https://finnhub.io/docs/api/quote) for live stock quotes and to [FRED](https://fred.stlouisfed.org/docs/api/fred/) for the Treasury risk-free rate. Those two real inputs feed the pricing model that generates the option chains the expected values are scored from.
-- **DB/Login** - MongoDB stores user accounts with securely hashed passwords, each user's watchlist, and their saved screener settings. Users register and log in before reaching the screener; an unauthenticated visitor cannot load screener data or modify a watchlist.
-- **WebSocket** - As spot prices move, the backend rescores expected values and pushes the updated cells to every connected client. Rows re-rank live, so all open clients see the same ordering at the same time without polling or refreshing.
+  - `GET /api/metrics` returning every metric definition with its formula, kind, grain, and coverage
+  - `GET /api/screener` returning the selected metrics for every company, sorted and ranked
+  - `GET /api/watchlist` and `PUT /api/watchlist` for reading and updating the user's tickers and saved screener setups
+  - Third party calls to [Finnhub](https://finnhub.io/docs/api) for stock quotes and company financials, the raw fields the metrics are computed from.
+- **DB/Login** - MongoDB stores user accounts with securely hashed passwords, each user's watchlist, and their saved screener setups. Users register and log in before reaching the screener; an unauthenticated visitor cannot load screener data or modify a watchlist.
+- **WebSocket** - As prices move, the backend recomputes the price-driven metrics and pushes the updated values to every connected client. Rows re-rank live, so all open clients see the same ordering at the same time without polling or refreshing.
 
 ## 🚀 Specification Deliverable
 
