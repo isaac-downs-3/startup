@@ -36,6 +36,7 @@ Relative references are preferable to reduce adjustments needed.
 Automatically playing audio is strongly discouraged. 
 Document Object Model (DOM) turns HTML into a tree structure the machine can parse. The DOM is what JavaScript and CSS interact with to do their work. 
 Inspect or view source after right-clicking to see the code backbone of any website. 
+
 ## React
 
 Interesting things I have learned about React
