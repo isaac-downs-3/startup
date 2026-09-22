@@ -73,6 +73,7 @@
             <th scope="col">Kind</th>
             <th scope="col">Grain</th>
             <th scope="col">Coverage</th>
+            <th scope="col">Definition</th>
           </tr>
         </thead>
         <tbody>
@@ -82,6 +83,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>eps_ttm</code> = netIncome, summed over the last 4 quarters, &divide; sharesOutstanding</p>
+                <p>Reads raw fields: <code>netIncome</code>, <code>sharesOutstanding</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Net margin</th>
@@ -89,6 +97,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>net_margin</code> = netIncome &divide; revenue, same quarter</p>
+                <p>Reads raw fields: <code>netIncome</code>, <code>revenue</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Net margin percentile vs own history</th>
@@ -96,6 +111,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="0.92">92%</meter> 92%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>net_margin_pct</code> = Share of the company's last 20 quarters with a lower net_margin. Needs 20 quarters of history.</p>
+                <p>Reads raw fields: <code>netIncome</code>, <code>revenue</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Revenue growth, year over year</th>
@@ -103,6 +125,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>revenue_yoy</code> = revenue &divide; revenue four quarters earlier &minus; 1</p>
+                <p>Reads raw fields: <code>revenue</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Free cash flow margin</th>
@@ -110,6 +139,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="0.92">92%</meter> 92%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>fcf_margin</code> = freeCashFlow &divide; revenue, same quarter</p>
+                <p>Reads raw fields: <code>freeCashFlow</code>, <code>revenue</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Price / earnings</th>
@@ -117,6 +153,13 @@
             <td>metric</td>
             <td>daily</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>pe</code> = price &divide; eps_ttm</p>
+                <p>Reads raw fields: <code>price</code>, <code>netIncome</code>, <code>sharesOutstanding</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">P/E percentile vs own history</th>
@@ -124,6 +167,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="0.92">92%</meter> 92%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>pe_pct</code> = Share of the company's last 20 quarter-end P/E values below today's pe. Needs 20 quarters of history.</p>
+                <p>Reads raw fields: <code>price</code>, <code>netIncome</code>, <code>sharesOutstanding</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Gross margin</th>
@@ -131,6 +181,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="0.83">83%</meter> 83%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>gross_margin</code> = grossProfit &divide; revenue, same quarter</p>
+                <p>Reads raw fields: <code>grossProfit</code>, <code>revenue</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Return on equity</th>
@@ -138,6 +195,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>roe</code> = netIncome, summed over the last 4 quarters, &divide; totalEquity</p>
+                <p>Reads raw fields: <code>netIncome</code>, <code>totalEquity</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Debt / equity</th>
@@ -145,6 +209,13 @@
             <td>metric</td>
             <td>quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>debt_to_equity</code> = totalDebt &divide; totalEquity</p>
+                <p>Reads raw fields: <code>totalDebt</code>, <code>totalEquity</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Dividend yield</th>
@@ -152,6 +223,13 @@
             <td>metric</td>
             <td>daily</td>
             <td><meter min="0" max="1" value="0.67">67%</meter> 67%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>dividend_yield</code> = dividendsPerShare, summed over the last 4 quarters, &divide; price</p>
+                <p>Reads raw fields: <code>dividendsPerShare</code>, <code>price</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Market capitalization</th>
@@ -159,6 +237,13 @@
             <td>metric</td>
             <td>daily</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>
+              <details>
+                <summary>Formula</summary>
+                <p><code>market_cap</code> = price &times; sharesOutstanding</p>
+                <p>Reads raw fields: <code>price</code>, <code>sharesOutstanding</code></p>
+              </details>
+            </td>
           </tr>
           <tr>
             <th scope="row">Revenue</th>
@@ -166,6 +251,7 @@
             <td>flow</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Net Income</th>
@@ -173,6 +259,7 @@
             <td>flow</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Gross Profit</th>
@@ -180,6 +267,7 @@
             <td>flow</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="0.83">83%</meter> 83%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Free Cash Flow</th>
@@ -187,6 +275,7 @@
             <td>flow</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="0.92">92%</meter> 92%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Dividends Per Share</th>
@@ -194,6 +283,7 @@
             <td>flow</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="0.67">67%</meter> 67%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Total Equity</th>
@@ -201,6 +291,7 @@
             <td>stock</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Total Debt</th>
@@ -208,6 +299,7 @@
             <td>stock</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Shares Outstanding</th>
@@ -215,6 +307,7 @@
             <td>stock</td>
             <td>annual, quarter</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Price</th>
@@ -222,6 +315,7 @@
             <td>rate</td>
             <td>daily</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
           <tr>
             <th scope="row">Sector</th>
@@ -229,6 +323,7 @@
             <td>label</td>
             <td>&mdash;</td>
             <td><meter min="0" max="1" value="1.00">100%</meter> 100%</td>
+            <td>Raw field from Finnhub</td>
           </tr>
         </tbody>
       </table>
