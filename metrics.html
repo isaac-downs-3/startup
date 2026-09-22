@@ -37,6 +37,32 @@
         not summed (total debt); a <i>rate</i> is observed at a moment (price); a <i>label</i> is text
         (sector). <b>Grain</b> is how often the value is reported.
       </p>
+
+      <form method="get" action="metrics.html">
+        <fieldset>
+          <legend>Find a value</legend>
+          <p>
+            <label for="filter">Filter</label>
+            <input type="search" id="filter" name="filter" placeholder="revenue, margin, shares..." />
+          </p>
+          <p>
+            Kind:
+            <input type="radio" id="kind-all" name="kind" value="all" checked />
+            <label for="kind-all">All</label>
+            <input type="radio" id="kind-metric" name="kind" value="metric" />
+            <label for="kind-metric">Metric</label>
+            <input type="radio" id="kind-flow" name="kind" value="flow" />
+            <label for="kind-flow">Flow</label>
+            <input type="radio" id="kind-stock" name="kind" value="stock" />
+            <label for="kind-stock">Stock</label>
+            <input type="radio" id="kind-rate" name="kind" value="rate" />
+            <label for="kind-rate">Rate</label>
+            <input type="radio" id="kind-label" name="kind" value="label" />
+            <label for="kind-label">Label</label>
+          </p>
+        </fieldset>
+        <button type="submit">Apply</button>
+      </form>
     </main>
 
     <footer>
