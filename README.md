@@ -96,15 +96,15 @@ For this deliverable I built out the full specification for Axon Trading House i
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Rented EC2 server** - I did not complete this part of the deliverable.
-- [ ] **Leased domain name** - I did not complete this part of the deliverable.
-- [ ] **Server accessible** from my domain: [https://axontradinghouse.click](https://axontradinghouse.click) - I did not complete this part of the deliverable.
+- [x] **Rented EC2 server** - I did not complete this part of the deliverable.
+- [x] **Leased domain name** - I did not complete this part of the deliverable.
+- [x] **Server accessible** from my domain: [https://axontradinghouse.click](https://axontradinghouse.click) - I did not complete this part of the deliverable.
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - A link to this GitHub repository is in the footer of every page, including the home page. The work is spread across many small commits. Simon HTML deployment is pending.
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - A link to this GitHub repository is in the footer of every page, including the home page. The work is spread across many small commits. 
 - [x] **HTML pages** - Five pages, one per component: `index.html` (login), `screener.html` (the metric screener), `metrics.html` (the metric definitions), `watchlist.html` (saved tickers and screener setups), and `about.html`.
 - [x] **Proper HTML element usage** - Every page uses `body` with `header`, `nav`, `main`, and `footer`. The screener and metric definitions are real `table` elements with `thead`, `tbody`, `caption`, and `th scope`. The controls use `form`, `fieldset`, `legend`, `label`, `select`, radio buttons, and checkboxes. Formulas use `details`/`summary`, coverage uses `meter`, and page sections use `section` and `aside`.
 - [x] **Links** - The `nav` on every page links to all five pages. Logging in on `index.html` goes to the screener. The screener links to the Metrics page, and each saved setup on the Watchlist links to the screener.
