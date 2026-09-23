@@ -85,7 +85,7 @@ I am going to use the required technologies in the following ways.
 
 For this deliverable I built out the full specification for Axon Trading House in this `README.md`.
 
-- [x] I completed the prerequisites for this deliverable (Git commit requirement)
+- [x] I completed the prerequisites for this deliverable
 - [x] Proper use of Markdown - Headings, bulleted and nested lists, a task list, bold and inline code, hyperlinks, a fenced Mermaid diagram, and an embedded image reference.
 - [x] A concise and compelling elevator pitch - A single paragraph framing the problem (chains show price but not edge) and the fix (an expected value ranked screener that updates live).
 - [x] Description of key features - Seven bullets covering login, the ranked screener grid, drill-down by expiration and spread, sortable strategy columns, persistent watchlists, live updates, and model-generated chains.
@@ -96,15 +96,15 @@ For this deliverable I built out the full specification for Axon Trading House i
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [x] **Rented EC2 server** - I did not complete this part of the deliverable.
-- [x] **Leased domain name** - I did not complete this part of the deliverable.
+- [x] **Rented EC2 server** - Done
+- [x] **Leased domain name** - Done.
 - [x] **Server accessible** from my domain: [https://axontradinghouse.click](https://axontradinghouse.click) - I did not complete this part of the deliverable.
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - A link to this GitHub repository is in the footer of every page, including the home page. The work is spread across many small commits. 
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - A link to this GitHub repository is in the footer of every page, including the home page. 
 - [x] **HTML pages** - Five pages, one per component: `index.html` (login), `screener.html` (the metric screener), `metrics.html` (the metric definitions), `watchlist.html` (saved tickers and screener setups), and `about.html`.
 - [x] **Proper HTML element usage** - Every page uses `body` with `header`, `nav`, `main`, and `footer`. The screener and metric definitions are real `table` elements with `thead`, `tbody`, `caption`, and `th scope`. The controls use `form`, `fieldset`, `legend`, `label`, `select`, radio buttons, and checkboxes. Formulas use `details`/`summary`, coverage uses `meter`, and page sections use `section` and `aside`.
 - [x] **Links** - The `nav` on every page links to all five pages. Logging in on `index.html` goes to the screener. The screener links to the Metrics page, and each saved setup on the Watchlist links to the screener.
@@ -119,7 +119,7 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
+- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link)
 - [ ] **Visually appealing colors and layout. No overflowing elements.** - I did not complete this part of the deliverable.
 - [ ] **Use of a CSS framework** - I did not complete this part of the deliverable.
 - [ ] **All visual elements styled using CSS** - I did not complete this part of the deliverable.
