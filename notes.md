@@ -41,7 +41,9 @@ Inspect or view source after right-clicking to see the code backbone of any webs
 
 Every page shares the same frame: header, nav, main, footer. Copying that frame into each page is the cost of having no templating yet — React components fix this later.
 With no JavaScript, a form's action attribute is the navigation: the login form's action="screener.html" is what "logs in".
-A GET form puts every named input in the URL. An input without a name attribute is not submitted, which keeps the placeholder password out of the address bar.
+A GET form puts every named input in the URL, so sensitive fields like passwords belong in a POST form, which sends them in the request body. An input without a name attribute is not submitted at all.
+Give multiple submit buttons in one form distinct name and value attributes (name="action" value="login" / "register") so the server can tell which was clicked.
+A static file server only answers GET, so a POST form has nowhere to land until there is a backend endpoint to receive it.
 A button can submit a form it isn't inside by using form="form-id".
 Tables: thead/tbody, th scope="col" for column headers, th scope="row" for the ticker in each row, and caption to describe the table.
 details/summary gives a collapsible section with no JavaScript — used for each metric's formula.
