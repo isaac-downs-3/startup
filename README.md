@@ -98,7 +98,7 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 - [ ] **Rented EC2 server** - I did not complete this part of the deliverable.
 - [ ] **Leased domain name** - I did not complete this part of the deliverable.
-- [ ] **Server accessible** from my domain: [https://yourdomainnamehere.click](https://yourdomainnamehere.click) - I did not complete this part of the deliverable.
+- [ ] **Server accessible** from my domain: [https://axontradinghouse.click](https://axontradinghouse.click) - I did not complete this part of the deliverable.
 
 ## 🚀 HTML deliverable
 
