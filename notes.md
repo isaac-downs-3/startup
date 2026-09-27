@@ -5,7 +5,6 @@ This file represents what I have learned about web programming.
 - [My startup](https://startup.axontradinghouse.click)
 - [My simon](https://simon.axontradinghouse.click)
 
-I love web programming
 
 ## Helpful links
 
@@ -52,6 +51,13 @@ abbr title="..." gives a hover tooltip — used to explain why a value is missin
 fieldset + legend group related form controls; label for="id" ties a label to its input.
 img needs alt text. SVG files work as images and stay sharp at any size.
 deployFiles.sh copies everything in the folder (scp -r *) to the server, so keys and anything private must live outside the project folder. Dotfiles are skipped by *.
+
+## CSS
+
+Defines rulesets and rules. 
+Rules uses selector to choose which elements to apply the rule to. 
+Declaration represents the property to style with given property value.
+CSS defines everything with boxes. 
 
 ## React
 
