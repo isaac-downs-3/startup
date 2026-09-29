@@ -58,3 +58,89 @@ main {
   margin-inline: auto;
   padding-block: 1.5rem;
 }
+
+/* Header: logo, site name, and "Signed in as" on one row, nav below.
+   The side padding lines the header up with main's centered column. */
+header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  row-gap: 0.5rem;
+  padding-inline: max(1rem, (100% - 1200px) / 2);
+  border-bottom: 1px solid var(--panel-edge);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+header img {
+  width: 40px;
+  height: 40px;
+}
+
+.signed-in {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.signed-in b {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* The nav spans the full second row of the header grid. */
+header nav {
+  grid-column: 1 / -1;
+}
+
+header menu {
+  margin: 0;
+  padding: 0;
+  gap: 0.25rem;
+}
+
+/* Pills: muted by default, brighter on hover or keyboard focus, and the
+   current page (aria-current) filled with the accent color. The current-page
+   selector includes .nav-pills so it outranks Bootstrap's own
+   .nav-pills .nav-link.active rule. */
+header .nav-link {
+  color: var(--muted);
+  padding: 0.35rem 0.85rem;
+}
+
+header .nav-link:hover,
+header .nav-link:focus-visible {
+  color: var(--text);
+  background-color: var(--panel-edge);
+}
+
+header .nav-pills .nav-link[aria-current='page'] {
+  color: var(--bg);
+  background-color: var(--accent);
+  font-weight: 500;
+}
+
+/* On a phone, drop "Signed in as" onto its own row under the site name so
+   the title is not squeezed. */
+@media (max-width: 480px) {
+  header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .signed-in {
+    grid-column: 1 / -1;
+  }
+
+  header menu {
+    gap: 0;
+  }
+
+  header .nav-link {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.95rem;
+  }
+}
