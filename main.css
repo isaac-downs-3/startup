@@ -1,0 +1,36 @@
+/* Axon Trading House — shared stylesheet for every page.
+   Loaded after Bootstrap so these rules take precedence. */
+
+/* Palette and fonts, defined once and reused everywhere below. */
+:root {
+  --bg: #0b0f14;
+  --panel: #131a22;
+  --panel-edge: #243040;
+  --text: #d6dde6;
+  --muted: #8a97a8;
+  --accent: #2dd4bf;
+  --neg: #f87171;
+  --pos: #4ade80;
+
+  --font-text: 'Inter', system-ui, sans-serif;
+  --font-figures: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Element selectors: base look for the whole page. */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-text);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+code {
+  font-family: var(--font-figures);
+  color: var(--accent);
+}
