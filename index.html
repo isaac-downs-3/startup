@@ -37,19 +37,21 @@
       <h2>Welcome</h2>
       <p>Screen and rank companies on metrics you can see the formula for.</p>
 
-      <form method="post" action="screener.html">
-        <fieldset>
-          <legend>Log in or create an account</legend>
+      <form class="card" method="post" action="screener.html">
+        <fieldset class="card-body">
+          <legend class="card-title">Log in or create an account</legend>
           <p>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="your@email.com" required />
+            <label class="form-label" for="username">Username</label>
+            <input class="form-control" type="text" id="username" name="username" placeholder="your@email.com" required />
           </p>
           <p>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="password" required />
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" placeholder="password" required />
           </p>
-          <button type="submit" name="action" value="login">Log in</button>
-          <button type="submit" name="action" value="register">Create account</button>
+          <div class="login-actions">
+            <button class="btn btn-primary" type="submit" name="action" value="login">Log in</button>
+            <button class="btn btn-outline-light" type="submit" name="action" value="register">Create account</button>
+          </div>
         </fieldset>
       </form>
     </main>

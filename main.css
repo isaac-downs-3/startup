@@ -140,8 +140,8 @@ header .nav-pills .nav-link[aria-current='page'] {
   }
 
   header .nav-link {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.95rem;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.92rem;
   }
 }
 
@@ -170,4 +170,61 @@ footer a {
 footer a:hover,
 footer a:focus-visible {
   text-decoration: underline;
+}
+
+/* Shared form controls: the accent color replaces Bootstrap's blue for
+   primary buttons and for the focus ring on inputs and selects. */
+.btn-primary {
+  --bs-btn-color: var(--bg);
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-color: var(--bg);
+  --bs-btn-hover-bg: #5eead4;
+  --bs-btn-hover-border-color: #5eead4;
+  --bs-btn-active-color: var(--bg);
+  --bs-btn-active-bg: #14b8a6;
+  --bs-btn-active-border-color: #14b8a6;
+  font-weight: 500;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgb(45 212 191 / 25%);
+}
+
+.card {
+  --bs-card-bg: var(--panel);
+  --bs-card-border-color: var(--panel-edge);
+}
+
+/* Login page: the welcome text and form centered as one narrow column. */
+#login main {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+#login form {
+  width: min(100%, 24rem);
+  margin-top: 1rem;
+  text-align: left;
+}
+
+#login legend {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+#login .login-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Both buttons share the row equally. */
+#login .login-actions .btn {
+  flex: 1;
 }
