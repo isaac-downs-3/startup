@@ -228,3 +228,137 @@ footer a:focus-visible {
 #login .login-actions .btn {
   flex: 1;
 }
+
+/* Panels: the shared look for fieldsets and side boxes. */
+fieldset,
+aside,
+.live-updates {
+  background-color: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+legend,
+aside h3,
+.live-updates h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+/* Outline toggle buttons (btn-check radios): the checked one is filled with
+   the accent color. */
+.btn-outline-secondary {
+  --bs-btn-color: var(--text);
+  --bs-btn-border-color: var(--panel-edge);
+  --bs-btn-hover-bg: var(--panel-edge);
+  --bs-btn-hover-border-color: var(--panel-edge);
+  --bs-btn-hover-color: var(--text);
+  --bs-btn-active-bg: var(--accent);
+  --bs-btn-active-border-color: var(--accent);
+  --bs-btn-active-color: var(--bg);
+}
+
+/* Screener: controls on the left, data source and live updates on the right,
+   results table full width below. Everything not placed explicitly spans
+   both columns. */
+#screener main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  column-gap: 1.5rem;
+  align-items: start;
+}
+
+#screener main > * {
+  grid-column: 1 / -1;
+}
+
+#screener .screener-controls {
+  grid-column: 1;
+  grid-row: 4 / span 2;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#screener .data-source {
+  grid-column: 2;
+  grid-row: 4;
+  margin-bottom: 1rem;
+}
+
+#screener .live-updates {
+  grid-column: 2;
+  grid-row: 5;
+  margin-bottom: 1.5rem;
+}
+
+#screener .screener-controls .btn-primary {
+  justify-self: start;
+  padding-inline: 1.5rem;
+}
+
+.control-row {
+  margin-bottom: 0.9rem;
+}
+
+.control-row:last-child {
+  margin-bottom: 0;
+}
+
+.control-row .form-label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+#screener #filter {
+  max-width: 20rem;
+}
+
+/* Sort select and direction toggle side by side, wrapping when narrow. */
+.sort-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sort-controls .form-select {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+/* Column checkboxes in as many columns as fit. */
+.column-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.35rem 1rem;
+}
+
+.column-picker .form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.column-picker .form-check-label {
+  font-size: 0.92rem;
+}
+
+/* Below 900px the side boxes drop under the controls in page order. */
+@media (max-width: 900px) {
+  #screener main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #screener .screener-controls,
+  #screener .data-source,
+  #screener .live-updates {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
