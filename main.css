@@ -546,3 +546,164 @@ td abbr[title] {
     animation: none;
   }
 }
+
+/* Metrics page: filter panel with the Apply button beside it, then the
+   dictionary table. */
+#metrics .metrics-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+
+#metrics .metrics-filter fieldset {
+  flex: 1 1 32rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+}
+
+#metrics .metrics-filter legend {
+  width: 100%;
+}
+
+#metrics .metrics-filter .control-row {
+  margin-bottom: 0;
+}
+
+#metrics #filter {
+  width: 18rem;
+  max-width: 100%;
+}
+
+.metrics-table th[scope='row'],
+.metrics-table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--panel);
+  font-weight: 500;
+  min-width: 10rem;
+}
+
+.metrics-table td {
+  font-size: 0.9rem;
+}
+
+/* Kind tags: one color per kind so the table scans by type. */
+.kind {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid currentColor;
+}
+
+.kind-metric {
+  color: var(--accent);
+}
+
+.kind-flow {
+  color: #60a5fa;
+}
+
+.kind-stock {
+  color: #c084fc;
+}
+
+.kind-rate {
+  color: #fbbf24;
+}
+
+.kind-label {
+  color: var(--muted);
+}
+
+/* Coverage: a slim bar followed by the percentage, kept on one line. */
+.metrics-table td:has(meter) {
+  white-space: nowrap;
+  font-family: var(--font-figures);
+}
+
+meter {
+  width: 4.5rem;
+  height: 0.5rem;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+meter::-webkit-meter-bar {
+  background: var(--panel-edge);
+  border: none;
+  border-radius: 0.25rem;
+}
+
+meter::-webkit-meter-optimum-value {
+  background: var(--accent);
+  border-radius: 0.25rem;
+}
+
+meter::-moz-meter-bar {
+  background: var(--accent);
+  border-radius: 0.25rem;
+}
+
+/* Formula disclosures: the default triangle is replaced by an arrow that
+   turns when the details are open. */
+summary {
+  list-style: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::before {
+  content: '\25B8';
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 1.1em;
+  transition: transform 0.15s;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+summary:hover {
+  text-decoration: underline;
+}
+
+details[open] {
+  min-width: 18rem;
+}
+
+details p {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+details p code {
+  font-size: 0.85em;
+}
+
+/* On a phone, drop the grain column and narrow the sticky name column so
+   more of the row shows; the rest scrolls sideways inside the table. */
+@media (max-width: 640px) {
+  .metrics-table tr > :nth-child(4) {
+    display: none;
+  }
+
+  .metrics-table th[scope='row'] {
+    min-width: 7.5rem;
+    font-size: 0.85rem;
+  }
+}
