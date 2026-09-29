@@ -58,6 +58,10 @@ Defines rulesets and rules.
 Rules uses selector to choose which elements to apply the rule to. 
 Declaration represents the property to style with given property value.
 CSS defines everything with boxes. 
+Selectors can cascade declaration down children in a body/section.
+CSS has an Animation property. 
+Bootstrap is the legacy package for CSS programming.
+Tailwind is now very popular now.
 
 ## React
 
