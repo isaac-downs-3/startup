@@ -362,3 +362,105 @@ aside h3,
     grid-row: auto;
   }
 }
+
+/* Data tables: panel background, muted caption above the table, and
+   headers aligned to the bottom so unit labels line up. */
+.table {
+  --bs-table-bg: var(--panel);
+  --bs-table-border-color: var(--panel-edge);
+  --bs-table-hover-bg: #1b2530;
+  margin-bottom: 0;
+}
+
+.table-responsive {
+  border: 1px solid var(--panel-edge);
+  border-radius: 0.5rem;
+}
+
+.table caption {
+  caption-side: top;
+  padding: 0.6rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  background-color: var(--panel);
+}
+
+.table thead th {
+  vertical-align: bottom;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.table thead small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Results table: figures right-aligned in a monospace font with equal-width
+   digits, so decimal places line up down each column. Rank and ticker stay
+   left-aligned. */
+.results-table td,
+.results-table thead th:nth-child(n + 3) {
+  text-align: right;
+}
+
+.results-table td {
+  font-family: var(--font-figures);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+.results-table td:first-child,
+.results-table thead th:first-child {
+  text-align: left;
+  color: var(--muted);
+}
+
+/* The ticker column stays put when the table scrolls sideways. */
+.results-table th[scope='row'],
+.results-table thead th:nth-child(2) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--panel);
+}
+
+.results-table th[scope='row'] {
+  font-family: var(--font-figures);
+  color: var(--accent);
+}
+
+.neg {
+  color: var(--neg) !important;
+}
+
+.pos {
+  color: var(--pos) !important;
+}
+
+/* A dash means "not computed", not zero: muted, with a help cursor. */
+td abbr[title] {
+  color: var(--muted);
+  cursor: help;
+  text-decoration: underline dotted;
+}
+
+.table-note {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* On a phone, show only rank, ticker, net margin, revenue growth, and P/E.
+   The hidden columns are still one click away on a wider screen. */
+@media (max-width: 640px) {
+  .results-table tr > :nth-child(3),
+  .results-table tr > :nth-child(5),
+  .results-table tr > :nth-child(7),
+  .results-table tr > :nth-child(9) {
+    display: none;
+  }
+}
