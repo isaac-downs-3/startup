@@ -34,3 +34,27 @@ code {
   font-family: var(--font-figures);
   color: var(--accent);
 }
+
+/* Page frame: header, main, and footer stacked in a column that fills the
+   window, so the footer sits at the bottom even on a short page. */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header,
+footer {
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+  background-color: var(--panel);
+}
+
+/* Main grows to fill the space between header and footer, and keeps its
+   content in a centered column with a 1rem gutter on narrow screens. */
+main {
+  flex: 1 0 auto;
+  width: min(100% - 2rem, 1200px);
+  margin-inline: auto;
+  padding-block: 1.5rem;
+}
