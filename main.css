@@ -464,3 +464,85 @@ td abbr[title] {
     display: none;
   }
 }
+
+/* Live updates: a pulsing dot marks the feed as live, and each update is a
+   row with a colored edge: green when the price rose, red when it fell,
+   accent for a new report. */
+.live-updates h3::before {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  background-color: var(--pos);
+  vertical-align: 0.05rem;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+.live-updates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.live-updates li {
+  padding: 0.45rem 0.6rem;
+  border-left: 3px solid var(--panel-edge);
+  border-radius: 0.25rem;
+  background-color: var(--bg);
+  font-size: 0.85rem;
+}
+
+.live-updates li.up {
+  border-left-color: var(--pos);
+}
+
+.live-updates li.down {
+  border-left-color: var(--neg);
+}
+
+.live-updates li.news {
+  border-left-color: var(--accent);
+}
+
+.live-updates time {
+  font-family: var(--font-figures);
+  color: var(--muted);
+}
+
+/* The newest update flashes as it arrives. */
+.live-updates li:first-child {
+  animation: live-arrive 1.6s ease-out 0.4s both;
+}
+
+@keyframes live-arrive {
+  from {
+    background-color: rgb(45 212 191 / 30%);
+    transform: translateX(-0.4rem);
+  }
+  to {
+    background-color: var(--bg);
+    transform: none;
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Honor the system "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  .live-updates h3::before,
+  .live-updates li:first-child {
+    animation: none;
+  }
+}
