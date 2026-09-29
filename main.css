@@ -144,3 +144,30 @@ header .nav-pills .nav-link[aria-current='page'] {
     font-size: 0.95rem;
   }
 }
+
+/* Footer: name on the left, GitHub link on the right, lined up with the
+   header and main column. */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: max(1rem, (100% - 1200px) / 2);
+  border-top: 1px solid var(--panel-edge);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+footer p {
+  margin: 0;
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+footer a:hover,
+footer a:focus-visible {
+  text-decoration: underline;
+}
