@@ -2,6 +2,8 @@
 
 [My Notes](notes.md)
 
+[Live site](https://startup.axontradinghouse.click)
+
 Axon Trading House is a proprietary trading firm buying and selling public securities: equities, options, and bonds. This application focuses on the research side of the business: defining the metrics that matter, then screening, ranking, and monitoring companies against them.
 
 ### Elevator pitch
