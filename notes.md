@@ -63,6 +63,27 @@ CSS has an Animation property.
 Bootstrap is the legacy package for CSS programming.
 Tailwind is now very popular now.
 
+Load order matters only for ties. main.css loads after Bootstrap so it wins when two selectors are equally specific, but a more specific selector wins no matter the order. Bootstrap's `.nav-pills .nav-link.active` (three classes) beat my `header .nav-link[aria-current]` (two classes and an element) until I added `.nav-pills` to mine.
+Specificity counts IDs, then classes/attributes/pseudo-classes, then elements. `#screener main` beats `main`, which is how each page's rules stay scoped to that page.
+Bootstrap 5.3 components are driven by CSS custom properties (`--bs-btn-bg`, `--bs-table-bg`, `--bs-card-bg`, `--bs-alert-bg`). Setting those is cleaner than overriding its selectors.
+`data-bs-theme="dark"` on `<html>` switches Bootstrap to its dark color mode.
+Custom properties on `:root` (`--bg`, `--accent`, `--neg`) give one place to change the whole palette.
+The SRI `integrity` hash on a CDN link makes the browser refuse the file if its contents ever change. Compute it with `openssl dgst -sha384 -binary file | openssl base64 -A`.
+Google Fonts: a `preconnect` to fonts.googleapis.com and fonts.gstatic.com, then the css2 stylesheet link. `font-variant-numeric: tabular-nums` makes every digit the same width so numbers line up in a column.
+Sticky footer: body as a flex column with `min-height: 100vh`, and `main` with `flex: 1`.
+Grid can place items without moving the HTML: `grid-column` and `grid-row` put the live updates box in the right column even though it comes after the table in the file. `repeat(auto-fill, minmax(15rem, 1fr))` fits as many columns as the width allows.
+`width: min(100% - 2rem, 1200px)` with `margin-inline: auto` gives a centered column with a 1rem gutter on small screens.
+Radios and checkboxes can look like buttons with no JavaScript: Bootstrap's `btn-check` hides the input and styles its `label` as a button. They are still real inputs, so the form submits the same way.
+Bootstrap's navbar collapse (hamburger) needs Bootstrap's JavaScript, so without JS the nav just wraps with flexbox.
+`.table-responsive` makes a wide table scroll sideways inside its own box instead of making the whole page scroll. `position: sticky; left: 0` pins the first column while it scrolls.
+Media queries plus `:nth-child()` can hide less important table columns on a phone: `tr > :nth-child(3) { display: none }` hides the third cell of every row, header included.
+Pseudo-elements add content with no HTML: `::before` draws the live dot and the formula arrow, `::marker` colors list numbers, and `::-webkit-meter-bar` / `::-moz-meter-bar` style a `<meter>`.
+Attribute selectors react to state: `details[open] summary::before` rotates the arrow when a formula is open. They can also match more than intended: `img[src$='.svg']` matched the logo too, until I scoped it to `main`.
+`:has()` selects a parent by its children: `td:has(meter)`.
+`@keyframes` plus `animation` runs with no JavaScript, and `@media (prefers-reduced-motion: reduce)` turns it off for people who ask for less motion.
+Buttons inherit font from their cell if the cell sets one, so a monospace table cell made the Remove buttons monospace.
+Checking "no overflow": `document.documentElement.scrollWidth` should equal `innerWidth`. Headless Chrome will not make a window narrower than 500px, so test phone width inside a 375px-wide iframe.
+
 ## React
 
 Interesting things I have learned about React

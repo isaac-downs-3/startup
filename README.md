@@ -119,13 +119,13 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link)
-- [ ] **Visually appealing colors and layout. No overflowing elements.** - I did not complete this part of the deliverable.
-- [ ] **Use of a CSS framework** - I did not complete this part of the deliverable.
-- [ ] **All visual elements styled using CSS** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing using flexbox and/or grid display** - I did not complete this part of the deliverable.
-- [ ] **Use of a imported font** - I did not complete this part of the deliverable.
-- [ ] **Use of different types of selectors including element, class, ID, and pseudo selectors** - I did not complete this part of the deliverable.
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link) - Simon CSS is deployed, and the footer of every page shows my name and links to this GitHub repository.
+- [x] **Visually appealing colors and layout. No overflowing elements.** - A dark trading-desk palette defined once as CSS custom properties: near-black background, slate panels, a teal accent, red for negative values, green for rising prices. Every page was checked at desktop and 375px phone widths, and none scrolls sideways. Wide tables scroll inside their own box.
+- [x] **Use of a CSS framework** - Bootstrap 5.3 from jsDelivr with an SRI hash, in its dark color mode (`data-bs-theme="dark"`). It provides the nav pills, cards, form controls, toggle-button radios (`btn-check`), button groups, input group, tables, and the alert. Its components are recolored through Bootstrap's own CSS variables in `main.css`.
+- [x] **All visual elements styled using CSS** - Header, nav, footer, login card, screener controls and results table, live updates, metrics table with kind tags, coverage meters and formula disclosures, watchlist tables and buttons, the about diagram, and the disclaimer. All styles live in `main.css`, with no inline styles.
+- [x] **Responsive to window resizing using flexbox and/or grid display** - The page frame is a flex column with the footer at the bottom. The header, screener and watchlist layouts use grid, and they switch to one column under 900px and 1000px. The column picker uses `auto-fill` grid. The sort and filter controls wrap with flexbox. On a phone the screener shows fewer metric columns and the metrics table drops its grain column.
+- [x] **Use of a imported font** - Inter for text and JetBrains Mono for figures, tickers and identifiers, both from Google Fonts. Numbers use tabular digits so decimals line up.
+- [x] **Use of different types of selectors including element, class, ID, and pseudo selectors** - Element (`body`, `header`, `meter`), class (`.neg`, `.kind-metric`), ID (`#screener main`, `#filter`), attribute (`[aria-current='page']`, `details[open]`, `img[src$='.svg']`), pseudo-classes (`:hover`, `:focus-visible`, `:nth-child()`, `:first-child`, `:has()`), and pseudo-elements (`::before`, `::marker`, `::-webkit-meter-bar`). The newest live update is animated with `@keyframes`.
 
 ## 🚀 React part 1: Routing deliverable
 
