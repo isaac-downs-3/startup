@@ -809,3 +809,57 @@ details p code {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* About page: a narrower column so lines stay a comfortable reading length. */
+#about main {
+  width: min(100% - 2rem, 48rem);
+}
+
+#about section {
+  margin-top: 2rem;
+}
+
+#about section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+/* The diagram scales down with the column instead of overflowing it. */
+#about main img[src$='.svg'] {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-block: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--panel-edge);
+}
+
+#about ol {
+  padding-left: 2rem;
+}
+
+#about ol li {
+  margin-bottom: 0.4rem;
+}
+
+#about ol li::marker {
+  color: var(--accent);
+  font-family: var(--font-figures);
+  font-weight: 500;
+}
+
+/* The disclaimer uses Bootstrap's warning alert, tuned to the palette. */
+#about .alert-warning {
+  --bs-alert-bg: rgb(251 191 36 / 8%);
+  --bs-alert-border-color: rgb(251 191 36 / 35%);
+  --bs-alert-color: var(--text);
+}
+
+#about .alert-warning h3 {
+  color: #fbbf24;
+  font-size: 1rem;
+}
+
+#about .alert-warning p {
+  margin-bottom: 0;
+}
