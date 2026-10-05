@@ -84,6 +84,15 @@ Attribute selectors react to state: `details[open] summary::before` rotates the 
 Buttons inherit font from their cell if the cell sets one, so a monospace table cell made the Remove buttons monospace.
 Checking "no overflow": `document.documentElement.scrollWidth` should equal `innerWidth`. Headless Chrome will not make a window narrower than 500px, so test phone width inside a 375px-wide iframe.
 
+## JavaScript
+
+3 ways to insert JavaScript into HTML: 
+1. Script block
+2. External code (src attribute)
+3. Inline event attribute
+
+Node.js allows JavaScript to be run on servers, outside browsers. 
+
 ## React
 
 Interesting things I have learned about React
