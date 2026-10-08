@@ -1,8 +1,6 @@
 import React from 'react';
-import { metrics } from '../metrics/metricsData';
+import { metricName } from '../metrics/metricsData';
 import { columns, rows } from './screenerData';
-
-const nameOf = (id) => metrics.find((m) => m.id === id).name;
 
 export function ScreenerTable() {
   return (
@@ -20,7 +18,7 @@ export function ScreenerTable() {
               <th scope="col">Ticker</th>
               {columns.map((c) => (
                 <th scope="col" key={c.id}>
-                  {nameOf(c.id)}
+                  {metricName(c.id)}
                   <br />
                   <small>{c.unit}</small>
                 </th>

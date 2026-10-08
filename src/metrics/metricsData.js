@@ -120,3 +120,8 @@ export const metrics = [
   { id: 'price', name: 'Price', kind: 'rate', grain: 'daily', coverage: 1.0 },
   { id: 'sector', name: 'Sector', kind: 'label', grain: '—', coverage: 1.0 },
 ];
+
+// Display name for a metric id, e.g. 'net_margin' -> 'Net margin'.
+export function metricName(id) {
+  return metrics.find((m) => m.id === id).name;
+}
