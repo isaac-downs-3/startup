@@ -1,9 +1,8 @@
 import React from 'react';
 import { metricName } from '../metrics/metricsData';
-import { columns, rows } from './screenerData';
 import { Cell } from './cell';
 
-export function ScreenerTable() {
+export function ScreenerTable({ columns, rows }) {
   return (
     <>
       <h3>Results</h3>

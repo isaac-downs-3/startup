@@ -2,6 +2,7 @@ import React from 'react';
 import './metrics.css';
 import { NavLink } from 'react-router-dom';
 import { MetricsTable } from './metricsTable';
+import { metrics } from './metricsData';
 
 const kinds = ['all', 'metric', 'flow', 'stock', 'rate', 'label'];
 
@@ -59,7 +60,7 @@ export function Metrics() {
         </button>
       </form>
 
-      <MetricsTable />
+      <MetricsTable metrics={metrics} />
     </main>
   );
 }

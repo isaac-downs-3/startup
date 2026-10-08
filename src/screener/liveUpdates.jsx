@@ -1,7 +1,6 @@
 import React from 'react';
-import { liveUpdates } from './screenerData';
 
-export function LiveUpdates() {
+export function LiveUpdates({ updates }) {
   return (
     <section className="live-updates">
       <h3>Live updates</h3>
@@ -10,7 +9,7 @@ export function LiveUpdates() {
         new values to every open screener, so rows re-rank without a refresh.
       </p>
       <ul>
-        {liveUpdates.map((update) => (
+        {updates.map((update) => (
           <li className={update.kind} key={update.time}>
             <time>{update.time}</time> &mdash; {update.text}
           </li>

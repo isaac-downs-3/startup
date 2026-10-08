@@ -1,13 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { metrics } from '../metrics/metricsData';
-import { columns } from './screenerData';
 
-// Every computed metric can be a column; the ones in the sample results start checked.
-const computed = metrics.filter((m) => m.kind === 'metric');
-const shown = computed.filter((m) => columns.some((c) => c.id === m.id));
+export function ScreenerControls({ metrics, columns }) {
+  // Every computed metric can be a column; the ones currently shown start checked.
+  const computed = metrics.filter((m) => m.kind === 'metric');
+  const shown = computed.filter((m) => columns.some((c) => c.id === m.id));
 
-export function ScreenerControls() {
   return (
     <form className="screener-controls">
       <fieldset>

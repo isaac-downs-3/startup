@@ -1,7 +1,6 @@
 import React from 'react';
-import { metrics } from './metricsData';
 
-export function MetricsTable() {
+export function MetricsTable({ metrics }) {
   const computed = metrics.filter((m) => m.kind === 'metric').length;
   const raw = metrics.length - computed;
 

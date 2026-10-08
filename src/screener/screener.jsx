@@ -5,7 +5,11 @@ import { ScreenerControls } from './screenerControls';
 import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
+import { metrics } from '../metrics/metricsData';
+import { columns, rows, liveUpdates } from './screenerData';
 
+// The screener owns its data and passes it down, so later the sample data can
+// be swapped for the service response in one place.
 export function Screener() {
   return (
     <main id="screener">
@@ -21,10 +25,10 @@ export function Screener() {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
-      <ScreenerControls />
+      <ScreenerControls metrics={metrics} columns={columns} />
       <DataSource />
-      <ScreenerTable />
-      <LiveUpdates />
+      <ScreenerTable columns={columns} rows={rows} />
+      <LiveUpdates updates={liveUpdates} />
     </main>
   );
 }
