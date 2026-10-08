@@ -1,6 +1,7 @@
 import React from 'react';
 import { metricName } from '../metrics/metricsData';
 import { columns, rows } from './screenerData';
+import { Cell } from './cell';
 
 export function ScreenerTable() {
   return (
@@ -41,16 +42,4 @@ export function ScreenerTable() {
       <p className="table-note">Hover a dash (&mdash;) to see why the value could not be computed.</p>
     </>
   );
-}
-
-// A missing value shows as a dash with the reason on hover, never as zero.
-function Cell({ value }) {
-  if (value.missing) {
-    return (
-      <td>
-        <abbr title={value.missing}>&mdash;</abbr>
-      </td>
-    );
-  }
-  return <td className={value.startsWith('-') ? 'neg' : undefined}>{value}</td>;
 }
