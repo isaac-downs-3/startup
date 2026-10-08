@@ -133,10 +133,10 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - I did not complete this part of the deliverable.
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - Simon React P1 is deployed at [simon.axontradinghouse.click](https://simon.axontradinghouse.click). The footer of every view shows my name and links to this GitHub repository.
+- [x] **Bundled using Vite** - The app is a Vite project: `index.html` at the root loads `index.jsx`, which mounts the React app. `npm run dev` runs Vite's hot-reloading dev server, and `deployReact.sh` runs `npm run build` and deploys the `dist/` bundle to [startup.axontradinghouse.click](https://startup.axontradinghouse.click). Bootstrap now comes from npm instead of a CDN.
+- [x] **Components** - Every HTML page is now a React component in its own folder under `src/`, with its own CSS file: `Login`, `Screener`, `Metrics`, `Watchlist`, and `About`, plus a `NotFound` view. The bigger views are split into smaller components: the screener is `ScreenerControls`, `DataSource`, `ScreenerTable` (with a `Cell` that shows a dash and its reason for missing values), and `LiveUpdates`. The metrics page uses `MetricsTable`, `MetricRow`, and `Formula`, and the watchlist uses `SavedTickers` and `SavedSetups`. The repeated rows are rendered from sample data arrays, and the screener's column picker and sort menu are built from the same metric list as the Metrics page. All of the HTML content and CSS styling from the previous deliverable carried over, with no reactivity yet.
+- [x] **Router** - React Router's `BrowserRouter` and `Routes` map `/`, `/screener`, `/metrics`, `/watchlist`, and `/about` to their components, and any other path shows a not-found view. The nav uses `NavLink`, which highlights the current view. Links inside the pages (to the Metrics page, the screener, and from each saved setup) are `NavLink`s too, and the login buttons route to the screener. A second `Routes` block in the header shows "Signed in as" on every view except login.
 
 ## 🚀 React part 2: Reactivity deliverable
 

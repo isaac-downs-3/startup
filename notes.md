@@ -104,3 +104,19 @@ React uses a Virtual DOM compares the new JSX output and old output and figures 
 
 Router defines the routes a user can take through the application. 
 
+
+## Startup React P1: Routing
+
+What I learned converting the HTML/CSS startup to React with Vite:
+
+- Vite wants `index.html` at the project root with a `<div id="root">` and a `<script type="module" src="/index.jsx">`. `index.jsx` mounts `<App />` into `#root`.
+- Files in `public/` are served as-is at `/` (`/logo.svg`). Small images that are `import`ed get inlined as data URIs instead, which can break selectors like `img[src$='.svg']`.
+- Vite's dev server serves `about.html` for `/about` if that file still exists, so the old HTML page shadows the React route. Delete each old page once it's ported.
+- JSX differences from HTML: `class` → `className`, `for` → `htmlFor`, every tag must close (`<input />`, `<br />`), comments are `{/* */}`, and uncontrolled inputs use `defaultChecked` / `defaultValue`.
+- JSX drops whitespace at a line break between text and a tag, so `on it.` followed by `<b>Kind</b>` on the next line renders as `on it.Kind`. Use `{' '}`.
+- React renders inside `#root`, not `body`, so layout rules on `body` (my flex page frame) have to move to a wrapper element.
+- With one `body` for every view, page-scoped CSS like `#screener main` stops working. I put the id on each view's `<main>` and changed the selectors to `main#screener`.
+- `NavLink` adds the `active` class and `aria-current="page"` to the link for the current route, so the existing nav pill styles kept working.
+- A `<Routes>` block can go anywhere, not just around the page body. I used one in the header to hide "Signed in as" on the login route.
+- Rendering repeated rows from an array with `.map()` needs a unique `key` on each element.
+- Deploying: `deployReact.sh` runs `npm run build` and copies only `dist/` to the server.
