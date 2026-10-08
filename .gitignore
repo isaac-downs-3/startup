@@ -3,3 +3,6 @@ production.pem
 .env
 CLAUDE.md
 .DS_Store
+node_modules
+dist
+build

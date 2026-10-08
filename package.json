@@ -1,0 +1,27 @@
+{
+  "name": "startup",
+  "version": "1.0.0",
+  "description": "Axon Trading House: a company metric screener",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-downs-3/startup.git"
+  },
+  "author": "Isaac Downs",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
+  }
+}
