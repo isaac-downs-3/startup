@@ -1,4 +1,5 @@
 import React from 'react';
+import './screener.css';
 import { NavLink } from 'react-router-dom';
 import { ScreenerControls } from './screenerControls';
 import { DataSource } from './dataSource';

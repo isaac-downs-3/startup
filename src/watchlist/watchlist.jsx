@@ -1,4 +1,5 @@
 import React from 'react';
+import './watchlist.css';
 import { NavLink } from 'react-router-dom';
 
 // Database placeholder: later these come from GET /api/watchlist for the signed-in user.

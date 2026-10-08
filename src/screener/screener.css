@@ -1,0 +1,211 @@
+/* Screener: controls on the left, data source and live updates on the right,
+   results table full width below. Everything not placed explicitly spans
+   both columns. */
+main#screener {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  column-gap: 1.5rem;
+  align-items: start;
+}
+
+main#screener > * {
+  grid-column: 1 / -1;
+}
+
+#screener .screener-controls {
+  grid-column: 1;
+  grid-row: 4 / span 2;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#screener .data-source {
+  grid-column: 2;
+  grid-row: 4;
+  margin-bottom: 1rem;
+}
+
+#screener .live-updates {
+  grid-column: 2;
+  grid-row: 5;
+  margin-bottom: 1.5rem;
+}
+
+#screener .screener-controls .btn-primary {
+  justify-self: start;
+  padding-inline: 1.5rem;
+}
+
+#screener #filter {
+  max-width: 20rem;
+}
+
+/* Sort select and direction toggle side by side, wrapping when narrow. */
+.sort-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sort-controls .form-select {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+/* Column checkboxes in as many columns as fit. */
+.column-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.35rem 1rem;
+}
+
+.column-picker .form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.column-picker .form-check-label {
+  font-size: 0.92rem;
+}
+
+/* Below 900px the side boxes drop under the controls in page order. */
+@media (max-width: 900px) {
+  main#screener {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #screener .screener-controls,
+  #screener .data-source,
+  #screener .live-updates {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* Results table: figures right-aligned in a monospace font with equal-width
+   digits, so decimal places line up down each column. Rank and ticker stay
+   left-aligned. */
+.results-table td,
+.results-table thead th:nth-child(n + 3) {
+  text-align: right;
+}
+
+.results-table td {
+  font-family: var(--font-figures);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+.results-table td:first-child,
+.results-table thead th:first-child {
+  text-align: left;
+  color: var(--muted);
+}
+
+/* The ticker column stays put when the table scrolls sideways. */
+.results-table th[scope='row'],
+.results-table thead th:nth-child(2) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--panel);
+}
+
+.results-table th[scope='row'] {
+  font-family: var(--font-figures);
+  color: var(--accent);
+}
+
+/* On a phone, show only rank, ticker, net margin, revenue growth, and P/E.
+   The hidden columns are still one click away on a wider screen. */
+@media (max-width: 640px) {
+  .results-table tr > :nth-child(3),
+  .results-table tr > :nth-child(5),
+  .results-table tr > :nth-child(7),
+  .results-table tr > :nth-child(9) {
+    display: none;
+  }
+}
+
+/* Live updates: a pulsing dot marks the feed as live, and each update is a
+   row with a colored edge: green when the price rose, red when it fell,
+   accent for a new report. */
+.live-updates h3::before {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  background-color: var(--pos);
+  vertical-align: 0.05rem;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+.live-updates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.live-updates li {
+  padding: 0.45rem 0.6rem;
+  border-left: 3px solid var(--panel-edge);
+  border-radius: 0.25rem;
+  background-color: var(--bg);
+  font-size: 0.85rem;
+}
+
+.live-updates li.up {
+  border-left-color: var(--pos);
+}
+
+.live-updates li.down {
+  border-left-color: var(--neg);
+}
+
+.live-updates li.news {
+  border-left-color: var(--accent);
+}
+
+.live-updates time {
+  font-family: var(--font-figures);
+  color: var(--muted);
+}
+
+/* The newest update flashes as it arrives. */
+.live-updates li:first-child {
+  animation: live-arrive 1.6s ease-out 0.4s both;
+}
+
+@keyframes live-arrive {
+  from {
+    background-color: rgb(45 212 191 / 30%);
+    transform: translateX(-0.4rem);
+  }
+  to {
+    background-color: var(--bg);
+    transform: none;
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Honor the system "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  .live-updates h3::before,
+  .live-updates li:first-child {
+    animation: none;
+  }
+}

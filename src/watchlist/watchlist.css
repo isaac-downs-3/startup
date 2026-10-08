@@ -1,0 +1,101 @@
+/* Watchlist: saved tickers beside saved setups on wide screens, stacked
+   below 1000px. */
+main#watchlist {
+  display: grid;
+  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
+  gap: 0 2rem;
+  align-content: start;
+}
+
+main#watchlist > h2,
+main#watchlist > p {
+  grid-column: 1 / -1;
+}
+
+#watchlist section h3 {
+  font-size: 1.15rem;
+  margin: 1rem 0 0.75rem;
+}
+
+#watchlist section > p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+#watchlist #add-ticker {
+  margin-bottom: 1rem;
+}
+
+#watchlist .input-group-text {
+  background-color: var(--panel);
+  border-color: var(--panel-edge);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tickers-table th[scope='row'] {
+  font-family: var(--font-figures);
+  color: var(--accent);
+}
+
+.tickers-table td,
+.setups-table td:last-child {
+  font-family: var(--font-figures);
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tickers-table td:last-child,
+.tickers-table thead th:last-child {
+  text-align: right;
+}
+
+.tickers-table th,
+.tickers-table td {
+  vertical-align: middle;
+}
+
+/* Buttons would otherwise inherit the cell's monospace font. */
+.tickers-table .btn {
+  font-family: var(--font-text);
+}
+
+.setups-table td {
+  font-size: 0.9rem;
+}
+
+/* Keep the text columns readable; on a narrow screen the table scrolls
+   sideways inside its box with the setup name pinned. */
+.setups-table td:nth-child(2) {
+  min-width: 14rem;
+}
+
+.setups-table td:nth-child(3) {
+  min-width: 9rem;
+}
+
+.setups-table th[scope='row'],
+.setups-table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--panel);
+}
+
+.setups-table th[scope='row'] a {
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.setups-table th[scope='row'] a:hover,
+.setups-table th[scope='row'] a:focus-visible {
+  text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+  main#watchlist {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

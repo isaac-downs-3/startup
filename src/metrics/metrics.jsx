@@ -1,4 +1,5 @@
 import React from 'react';
+import './metrics.css';
 import { NavLink } from 'react-router-dom';
 import { MetricsTable } from './metricsTable';
 
