@@ -101,3 +101,6 @@ JSX provies the ability to represent HTML manipulated by JavaScript.
 Components generate the user interface.
 Components can be linked in a tree structure.
 React uses a Virtual DOM compares the new JSX output and old output and figures out the most efficient way to update the web program. 
+
+Router defines the routes a user can take through the application. 
+
