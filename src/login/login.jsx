@@ -1,16 +1,25 @@
 import React from 'react';
 import './login.css';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function Login() {
+  const navigate = useNavigate();
+
+  // Login is mocked for now: once the browser's required-field check passes,
+  // go to the screener. Real authentication replaces this in the service
+  // deliverable.
+  function handleSubmit(event) {
+    event.preventDefault();
+    navigate('/screener');
+  }
+
   return (
     <main id="login">
       <h2>Welcome</h2>
       <p>Screen and rank companies on metrics you can see the formula for.</p>
 
-      {/* Login is mocked for now: both buttons go straight to the screener.
-          The inputs have no name, so nothing typed here ends up in a URL. */}
-      <form className="card">
+      {/* The inputs have no name, so nothing typed here ends up in a URL. */}
+      <form className="card" onSubmit={handleSubmit}>
         <fieldset className="card-body">
           <legend className="card-title">Log in or create an account</legend>
           <p>
@@ -26,12 +35,12 @@ export function Login() {
             <input className="form-control" type="password" id="password" placeholder="password" required />
           </p>
           <div className="login-actions">
-            <NavLink className="btn btn-primary" to="/screener">
+            <button className="btn btn-primary" type="submit">
               Log in
-            </NavLink>
-            <NavLink className="btn btn-outline-light" to="/screener">
+            </button>
+            <button className="btn btn-outline-light" type="submit">
               Create account
-            </NavLink>
+            </button>
           </div>
         </fieldset>
       </form>
