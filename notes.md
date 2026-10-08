@@ -95,4 +95,9 @@ Node.js allows JavaScript to be run on servers, outside browsers.
 
 ## React
 
-Interesting things I have learned about React
+React is component-based, so you can construct web programs more like building blocks instead of unitary scripts. 
+
+JSX provies the ability to represent HTML manipulated by JavaScript.
+Components generate the user interface.
+Components can be linked in a tree structure.
+React uses a Virtual DOM compares the new JSX output and old output and figures out the most efficient way to update the web program. 
