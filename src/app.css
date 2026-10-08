@@ -36,8 +36,9 @@ code {
 }
 
 /* Page frame: header, main, and footer stacked in a column that fills the
-   window, so the footer sits at the bottom even on a short page. */
-body {
+   window, so the footer sits at the bottom even on a short page. React
+   renders into #root, so the frame is the .app wrapper instead of body. */
+.app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
