@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "ClaudeInChromeDomain(masteryls.com)",
+      "ClaudeInChromeDomain(localhost:5173)",
+      "ClaudeInChromeDomain(startup.axontradinghouse.click)"
+    ]
+  }
+}

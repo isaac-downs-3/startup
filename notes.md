@@ -93,6 +93,16 @@ Checking "no overflow": `document.documentElement.scrollWidth` should equal `inn
 
 Node.js allows JavaScript to be run on servers, outside browsers. 
 
+Anonymous functions are useful for passing a function into another function as a parmeter.
+Arrow functions allow for implicit returns, abbreviating return commands. 
+"This" functions are the most important divergence in how arrow and normal functions operate. 
+JavaScript arrays include dynamic sizing
+Destructuring = pulling items out of an object
+Hooks are special functions that allow functional components to access the React state
+
+JSON = JavaScript Object Notation
+Dates expressed through strings with standardized notation.
+
 ## React
 
 React is component-based, so you can construct web programs more like building blocks instead of unitary scripts. 
@@ -103,6 +113,8 @@ Components can be linked in a tree structure.
 React uses a Virtual DOM compares the new JSX output and old output and figures out the most efficient way to update the web program. 
 
 Router defines the routes a user can take through the application. 
+
+props, state, and render are key aspects of React that allow it to change programs in response to user input.
 
 
 ## Startup React P1: Routing
