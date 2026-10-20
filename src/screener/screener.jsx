@@ -6,19 +6,14 @@ import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
 import { getMetrics, getScreener } from '../service';
-import { defaultSetup, liveUpdates } from './screenerData';
+import { liveUpdates } from './screenerData';
+import { readSetup, saveSetup } from './setupStore';
 
 // The screener loads its data once and passes it down to the parts that show it.
 export function Screener({ userName }) {
   const [metrics, setMetrics] = React.useState([]);
   const [rows, setRows] = React.useState([]);
-  // Each user's setup is kept in localStorage until the database deliverable,
-  // so the screener opens the way they left it.
-  const setupKey = `screenerSetup.${userName}`;
-  const [setup, setSetup] = React.useState(() => ({
-    ...defaultSetup,
-    ...JSON.parse(localStorage.getItem(setupKey) ?? '{}'),
-  }));
+  const [setup, setSetup] = React.useState(() => readSetup(userName));
   const [filter, setFilter] = React.useState('');
 
   React.useEffect(() => {
@@ -27,8 +22,8 @@ export function Screener({ userName }) {
   }, []);
 
   React.useEffect(() => {
-    localStorage.setItem(setupKey, JSON.stringify(setup));
-  }, [setupKey, setup]);
+    saveSetup(userName, setup);
+  }, [userName, setup]);
 
   return (
     <main id="screener">
