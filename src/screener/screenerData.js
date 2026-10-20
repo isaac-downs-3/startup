@@ -1,5 +1,5 @@
-// Sample screener results as of the 2025-06-30 close. Later these come from
-// GET /api/screener. A value of { missing: reason } could not be computed.
+// Sample screener results as of the 2025-06-30 close, served by getScreener() in
+// service.js. A value of { missing: reason } could not be computed.
 export const columns = ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy', 'fcf_margin', 'pe', 'pe_pct'];
 
 const noFcf = { missing: 'Not defined for banks: no free cash flow line in the financials' };

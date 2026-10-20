@@ -3,7 +3,7 @@ import { Cell } from './cell';
 
 export function ScreenerTable({ metrics, columns, rows }) {
   // Each column is a metric id; its name and unit come from the metric definition.
-  const shown = columns.map((id) => metrics.find((m) => m.id === id));
+  const shown = metrics.filter((m) => columns.includes(m.id));
 
   return (
     <>

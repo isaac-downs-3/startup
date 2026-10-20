@@ -5,12 +5,19 @@ import { ScreenerControls } from './screenerControls';
 import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
-import { metrics } from '../metrics/metricsData';
-import { columns, rows, liveUpdates } from './screenerData';
+import { getMetrics, getScreener } from '../service';
+import { columns, liveUpdates } from './screenerData';
 
-// The screener owns its data and passes it down, so later the sample data can
-// be swapped for the service response in one place.
+// The screener loads its data once and passes it down to the parts that show it.
 export function Screener() {
+  const [metrics, setMetrics] = React.useState([]);
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    getMetrics().then(setMetrics);
+    getScreener().then(setRows);
+  }, []);
+
   return (
     <main id="screener">
       <h2>Screener</h2>
@@ -25,7 +32,8 @@ export function Screener() {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
-      <ScreenerControls metrics={metrics} columns={columns} />
+      {/* The controls' defaults only apply on their first render, so wait for the metrics. */}
+      {metrics.length > 0 && <ScreenerControls metrics={metrics} columns={columns} />}
       <DataSource />
       <ScreenerTable metrics={metrics} columns={columns} rows={rows} />
       <LiveUpdates updates={liveUpdates} />
