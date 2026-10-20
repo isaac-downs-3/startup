@@ -3,7 +3,7 @@ import './watchlist.css';
 import { NavLink } from 'react-router-dom';
 import { getWatchlist } from '../service';
 
-export function Watchlist() {
+export function Watchlist({ userName }) {
   const [tickers, setTickers] = React.useState([]);
   const [setups, setSetups] = React.useState([]);
 
@@ -22,13 +22,13 @@ export function Watchlist() {
         it follows you between sessions and devices.
       </p>
 
-      <SavedTickers tickers={tickers} />
-      <SavedSetups setups={setups} />
+      <SavedTickers userName={userName} tickers={tickers} />
+      <SavedSetups userName={userName} setups={setups} />
     </main>
   );
 }
 
-function SavedTickers({ tickers }) {
+function SavedTickers({ userName, tickers }) {
   return (
     <section className="saved-tickers">
       <h3>Saved tickers</h3>
@@ -43,7 +43,9 @@ function SavedTickers({ tickers }) {
       </form>
       <div className="table-responsive">
         <table className="table table-hover tickers-table">
-          <caption>Database placeholder &middot; {tickers.length} tickers stored for analyst</caption>
+          <caption>
+            Database placeholder &middot; {tickers.length} tickers stored for {userName}
+          </caption>
           <thead>
             <tr>
               <th scope="col">Ticker</th>
@@ -70,14 +72,16 @@ function SavedTickers({ tickers }) {
   );
 }
 
-function SavedSetups({ setups }) {
+function SavedSetups({ userName, setups }) {
   return (
     <section className="saved-setups">
       <h3>Saved screener setups</h3>
       <p>Column choices, sort order, and view saved to your account. Open one to load it in the screener.</p>
       <div className="table-responsive">
         <table className="table table-hover setups-table">
-          <caption>Database placeholder &middot; {setups.length} setups stored for analyst</caption>
+          <caption>
+            Database placeholder &middot; {setups.length} setups stored for {userName}
+          </caption>
           <thead>
             <tr>
               <th scope="col">Setup</th>

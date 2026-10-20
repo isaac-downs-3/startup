@@ -78,7 +78,7 @@ export default function App() {
               to the login page. Metric definitions are public. */}
           <Route path="/screener" element={userName ? <Screener /> : <Navigate to="/" replace />} />
           <Route path="/metrics" element={<Metrics />} />
-          <Route path="/watchlist" element={userName ? <Watchlist /> : <Navigate to="/" replace />} />
+          <Route path="/watchlist" element={userName ? <Watchlist userName={userName} /> : <Navigate to="/" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
