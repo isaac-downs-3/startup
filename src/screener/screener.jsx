@@ -35,10 +35,11 @@ export function Screener({ userName }) {
       <h2>Screener</h2>
       <p>
         Every metric defined on the <NavLink to="/metrics">Metrics</NavLink> page, computed for every
-        company on your watchlist. Choose which metrics to show as columns, then sort or rank the companies
-        on any one of them. Switch to <b>Ranks</b> to see each company's position on a metric instead of
-        its value. A dash (&mdash;) is not zero: it means the value could not be computed because an input
-        was missing.
+        company on your watchlist. Choose which metrics to show as columns, then sort the companies on any
+        one of them from the menu or by clicking its header. Switch to <b>Ranks</b> to see each company's
+        position on every metric instead of its value, counted in the sort direction. A dash (&mdash;) is
+        not zero: it means the value could not be computed because an input was missing, and it is never
+        ranked. Your setup is saved, so the screener opens the way you left it.
       </p>
       <p>
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
