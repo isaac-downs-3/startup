@@ -6,12 +6,13 @@ import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
 import { getMetrics, getScreener } from '../service';
-import { columns, liveUpdates } from './screenerData';
+import { defaultSetup, liveUpdates } from './screenerData';
 
 // The screener loads its data once and passes it down to the parts that show it.
 export function Screener() {
   const [metrics, setMetrics] = React.useState([]);
   const [rows, setRows] = React.useState([]);
+  const [setup, setSetup] = React.useState(defaultSetup);
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
@@ -33,9 +34,9 @@ export function Screener() {
       </p>
 
       {/* The controls' defaults only apply on their first render, so wait for the metrics. */}
-      {metrics.length > 0 && <ScreenerControls metrics={metrics} columns={columns} />}
+      {metrics.length > 0 && <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} />}
       <DataSource />
-      <ScreenerTable metrics={metrics} columns={columns} rows={rows} />
+      <ScreenerTable metrics={metrics} columns={setup.columns} rows={rows} />
       <LiveUpdates updates={liveUpdates} />
     </main>
   );

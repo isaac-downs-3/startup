@@ -32,11 +32,6 @@ main#screener > * {
   margin-bottom: 1.5rem;
 }
 
-#screener .screener-controls .btn-primary {
-  justify-self: start;
-  padding-inline: 1.5rem;
-}
-
 #screener #filter {
   max-width: 20rem;
 }

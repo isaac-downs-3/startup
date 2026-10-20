@@ -1,6 +1,13 @@
 // Sample screener results as of the 2025-06-30 close, served by getScreener() in
 // service.js. A value of { missing: reason } could not be computed.
-export const columns = ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy', 'fcf_margin', 'pe', 'pe_pct'];
+// The setup a new user starts with: which metrics are columns, and how the
+// companies are sorted and shown.
+export const defaultSetup = {
+  columns: ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy', 'fcf_margin', 'pe', 'pe_pct'],
+  sort: 'net_margin',
+  order: 'desc',
+  view: 'values',
+};
 
 const noFcf = { missing: 'Not defined for banks: no free cash flow line in the financials' };
 const shortHistory = { missing: 'Needs 20 quarters of history; 12 available' };

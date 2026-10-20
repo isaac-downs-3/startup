@@ -1,13 +1,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-export function ScreenerControls({ metrics, columns }) {
-  // Every computed metric can be a column; the ones currently shown start checked.
+// The controls change the setup as you use them; there is nothing to apply.
+export function ScreenerControls({ metrics, setup, onChange }) {
+  // Every computed metric can be a column.
   const computed = metrics.filter((m) => m.kind === 'metric');
-  const shown = computed.filter((m) => columns.includes(m.id));
+  const shown = computed.filter((m) => setup.columns.includes(m.id));
+
+  function toggleColumn(id) {
+    const columns = setup.columns.includes(id) ? setup.columns.filter((c) => c !== id) : [...setup.columns, id];
+    onChange({ ...setup, columns });
+  }
 
   return (
-    <form className="screener-controls">
+    <form className="screener-controls" onSubmit={(e) => e.preventDefault()}>
       <fieldset>
         <legend>Screen</legend>
         <div className="control-row">
@@ -61,6 +67,7 @@ export function ScreenerControls({ metrics, columns }) {
         <p>
           Any metric defined on the <NavLink to="/metrics">Metrics</NavLink> page can be a column.
         </p>
+        {/* The last column can't be unchecked: the table needs at least one. */}
         <div className="column-picker">
           {computed.map((m) => (
             <div className="form-check" key={m.id}>
@@ -69,7 +76,9 @@ export function ScreenerControls({ metrics, columns }) {
                 type="checkbox"
                 id={`col-${m.id}`}
                 value={m.id}
-                defaultChecked={shown.includes(m)}
+                checked={shown.includes(m)}
+                disabled={shown.length === 1 && shown.includes(m)}
+                onChange={() => toggleColumn(m.id)}
               />
               <label className="form-check-label" htmlFor={`col-${m.id}`}>
                 {m.name}
@@ -78,9 +87,6 @@ export function ScreenerControls({ metrics, columns }) {
           ))}
         </div>
       </fieldset>
-      <button className="btn btn-primary" type="button">
-        Apply
-      </button>
     </form>
   );
 }
