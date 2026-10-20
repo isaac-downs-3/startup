@@ -9,9 +9,17 @@ export async function getMetrics() {
   return metrics;
 }
 
-// GET /api/screener: one row per company with every metric's value.
-export async function getScreener() {
-  return rows;
+// GET /api/screener: one row per company on the user's watchlist, with every
+// metric's value. A ticker the sample data doesn't cover gets a row of dashes.
+export async function getScreener(userName) {
+  const { tickers } = await getWatchlist(userName);
+  return tickers.map(({ ticker }) => rows.find((row) => row.ticker === ticker) ?? noSampleData(ticker));
+}
+
+function noSampleData(ticker) {
+  const missing = { missing: 'No sample data for this ticker until Finnhub is connected' };
+  const values = Object.fromEntries(Object.keys(rows[0].values).map((id) => [id, missing]));
+  return { ticker, price: null, values };
 }
 
 // GET /api/watchlist: the signed-in user's saved tickers and screener setups.

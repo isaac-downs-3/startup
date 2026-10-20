@@ -7,6 +7,7 @@ export function startPriceFeed(prices, onQuote, everyMs = 2500) {
   const latest = { ...prices };
   const timer = setInterval(() => {
     const tickers = Object.keys(latest);
+    if (tickers.length === 0) return;
     const ticker = tickers[Math.floor(Math.random() * tickers.length)];
     const price = Math.round(latest[ticker] * (1 + (Math.random() - 0.5) * 0.03) * 100) / 100;
     latest[ticker] = price;

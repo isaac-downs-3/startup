@@ -25,8 +25,8 @@ export function Screener({ userName }) {
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
-    getScreener().then(setRows);
-  }, []);
+    getScreener(userName).then(setRows);
+  }, [userName]);
 
   React.useEffect(() => {
     saveSetup(userName, setup);
@@ -38,7 +38,9 @@ export function Screener({ userName }) {
   const loaded = rows.length > 0;
   React.useEffect(() => {
     if (!loaded || paused) return;
-    const prices = Object.fromEntries(rows.map((row) => [row.ticker, row.price]));
+    // Only companies with a price can move.
+    const priced = rows.filter((row) => row.price !== null);
+    const prices = Object.fromEntries(priced.map((row) => [row.ticker, row.price]));
     return startPriceFeed(prices, (quote) => {
       const before = rowsRef.current.find((row) => row.ticker === quote.ticker);
       const after = repriceRow(before, quote.price);
