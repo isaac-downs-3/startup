@@ -12,12 +12,34 @@ main#screener > * {
   grid-column: 1 / -1;
 }
 
-#screener .screener-controls {
+/* The controls and the save form share the left column. */
+#screener .controls-column {
   grid-column: 1;
   grid-row: 4 / span 2;
+  margin-bottom: 1.5rem;
+}
+
+#screener .screener-controls {
   display: grid;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+#screener .save-setup .input-group-text {
+  background-color: var(--panel);
+  border-color: var(--panel-edge);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+#screener .save-setup .input-group {
+  max-width: 32rem;
+}
+
+#screener .save-message {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 #screener .data-source {
@@ -70,7 +92,7 @@ main#screener > * {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #screener .screener-controls,
+  #screener .controls-column,
   #screener .data-source,
   #screener .live-updates {
     grid-column: 1;

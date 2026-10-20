@@ -2,10 +2,11 @@ import React from 'react';
 import './screener.css';
 import { NavLink } from 'react-router-dom';
 import { ScreenerControls } from './screenerControls';
+import { SaveSetupForm } from './saveSetupForm';
 import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
-import { getMetrics, getScreener } from '../service';
+import { getMetrics, getScreener, getWatchlist, saveWatchlist } from '../service';
 import { readSetup, saveSetup } from './setupStore';
 import { describeMove, repriceRow, startPriceFeed } from './priceFeed';
 
@@ -50,6 +51,21 @@ export function Screener({ userName }) {
     });
   }, [loaded, paused]);
 
+  // Save the current setup to the user's watchlist. A setup with the same name,
+  // ignoring case, is replaced in place and keeps its name. Returns the saved
+  // name and whether it replaced one.
+  async function saveNamedSetup(name) {
+    const watchlist = await getWatchlist(userName);
+    const existing = watchlist.setups.find((s) => s.name.toLowerCase() === name.toLowerCase());
+    const lastUsed = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+    const saved = { name: existing?.name ?? name, setup, lastUsed };
+    const setups = existing
+      ? watchlist.setups.map((s) => (s === existing ? saved : s))
+      : [...watchlist.setups, saved];
+    await saveWatchlist(userName, { ...watchlist, setups });
+    return { name: saved.name, replaced: Boolean(existing) };
+  }
+
   return (
     <main id="screener">
       <h2>Screener</h2>
@@ -65,7 +81,10 @@ export function Screener({ userName }) {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
-      <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
+      <div className="controls-column">
+        <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
+        <SaveSetupForm onSave={saveNamedSetup} />
+      </div>
       <DataSource />
       <ScreenerTable
         metrics={metrics}
