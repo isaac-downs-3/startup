@@ -2,6 +2,7 @@ import React from 'react';
 import './watchlist.css';
 import { NavLink } from 'react-router-dom';
 import { getMetrics, getWatchlist, saveWatchlist } from '../service';
+import { saveSetup } from '../screener/setupStore';
 
 export function Watchlist({ userName }) {
   const [metrics, setMetrics] = React.useState([]);
@@ -23,13 +24,25 @@ export function Watchlist({ userName }) {
   }
 
   function addTicker(ticker) {
-    const added = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+    const added = today();
     const next = [...tickers, { ticker, added }].sort((a, b) => a.ticker.localeCompare(b.ticker));
     update({ tickers: next });
   }
 
   function removeTicker(ticker) {
     update({ tickers: tickers.filter((t) => t.ticker !== ticker) });
+  }
+
+  // Opening a saved setup makes it the screener's current setup. Its link then
+  // goes to the screener.
+  function openSetup(name) {
+    const saved = setups.find((s) => s.name === name);
+    saveSetup(userName, saved.setup);
+    update({ setups: setups.map((s) => (s.name === name ? { ...s, lastUsed: today() } : s)) });
+  }
+
+  function deleteSetup(name) {
+    update({ setups: setups.filter((s) => s.name !== name) });
   }
 
   return (
@@ -48,7 +61,13 @@ export function Watchlist({ userName }) {
         onAdd={addTicker}
         onRemove={removeTicker}
       />
-      <SavedSetups userName={userName} setups={setups} metrics={metrics} />
+      <SavedSetups
+        userName={userName}
+        setups={setups}
+        metrics={metrics}
+        onOpen={openSetup}
+        onDelete={deleteSetup}
+      />
     </main>
   );
 }
@@ -131,7 +150,7 @@ function SavedTickers({ userName, tickers, loaded, onAdd, onRemove }) {
   );
 }
 
-function SavedSetups({ userName, setups, metrics }) {
+function SavedSetups({ userName, setups, metrics, onOpen, onDelete }) {
   const nameOf = (id) => metrics.find((m) => m.id === id)?.name;
 
   return (
@@ -150,13 +169,16 @@ function SavedSetups({ userName, setups, metrics }) {
               <th scope="col">Sorted by</th>
               <th scope="col">View</th>
               <th scope="col">Last used</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
             {setups.map(({ name, setup, lastUsed }) => (
               <tr key={name}>
                 <th scope="row">
-                  <NavLink to="/screener">{name}</NavLink>
+                  <NavLink to="/screener" onClick={() => onOpen(name)}>
+                    {name}
+                  </NavLink>
                 </th>
                 <td>{setup.columns.map(nameOf).join(', ')}</td>
                 <td>
@@ -164,6 +186,11 @@ function SavedSetups({ userName, setups, metrics }) {
                 </td>
                 <td>{setup.view === 'ranks' ? 'Ranks' : 'Values'}</td>
                 <td>{lastUsed}</td>
+                <td>
+                  <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => onDelete(name)}>
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -171,4 +198,9 @@ function SavedSetups({ userName, setups, metrics }) {
       </div>
     </section>
   );
+}
+
+// YYYY-MM-DD in local time.
+function today() {
+  return new Date().toLocaleDateString('en-CA');
 }

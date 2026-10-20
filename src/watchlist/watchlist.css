@@ -45,7 +45,7 @@ main#watchlist > p {
 }
 
 .tickers-table td,
-.setups-table td:last-child {
+.setups-table td:nth-child(5) {
   font-family: var(--font-figures);
   font-size: 0.85rem;
   color: var(--muted);
@@ -65,6 +65,11 @@ main#watchlist > p {
 /* Buttons would otherwise inherit the cell's monospace font. */
 .tickers-table .btn {
   font-family: var(--font-text);
+}
+
+.setups-table td:last-child,
+.setups-table thead th:last-child {
+  text-align: right;
 }
 
 .setups-table td {
