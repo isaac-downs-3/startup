@@ -8,6 +8,7 @@ import { LiveUpdates } from './liveUpdates';
 import { getMetrics, getScreener } from '../service';
 import { liveUpdates } from './screenerData';
 import { readSetup, saveSetup } from './setupStore';
+import { repriceRow, startPriceFeed } from './priceFeed';
 
 // The screener loads its data once and passes it down to the parts that show it.
 export function Screener({ userName }) {
@@ -24,6 +25,20 @@ export function Screener({ userName }) {
   React.useEffect(() => {
     saveSetup(userName, setup);
   }, [userName, setup]);
+
+  // Once the rows are loaded, start the simulated price feed, and stop it when
+  // the screener closes. Each new price recomputes that company's price-driven
+  // metrics, and the table re-sorts and re-ranks from the new rows.
+  const loaded = rows.length > 0;
+  React.useEffect(() => {
+    if (!loaded) return;
+    const prices = Object.fromEntries(rows.map((row) => [row.ticker, row.price]));
+    return startPriceFeed(prices, (quote) => {
+      setRows((current) =>
+        current.map((row) => (row.ticker === quote.ticker ? repriceRow(row, quote.price) : row))
+      );
+    });
+  }, [loaded]);
 
   return (
     <main id="screener">
