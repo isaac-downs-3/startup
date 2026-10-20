@@ -1,5 +1,4 @@
-/* Metrics page: filter panel with the Apply button beside it, then the
-   dictionary table. */
+/* Metrics page: filter panel, then the dictionary table. */
 #metrics .metrics-filter {
   display: flex;
   flex-wrap: wrap;

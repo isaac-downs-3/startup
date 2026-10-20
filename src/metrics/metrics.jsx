@@ -9,6 +9,7 @@ const kinds = ['all', 'metric', 'flow', 'stock', 'rate', 'label'];
 export function Metrics() {
   const [metrics, setMetrics] = React.useState([]);
   const [query, setQuery] = React.useState('');
+  const [kind, setKind] = React.useState('all');
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
@@ -17,8 +18,10 @@ export function Metrics() {
   // A value matches when the text appears in its name, identifier, formula, or
   // the raw fields it reads, so "revenue" also finds every metric built on revenue.
   const text = query.trim().toLowerCase();
-  const shown = metrics.filter((m) =>
-    [m.name, m.id, m.formula ?? '', ...(m.reads ?? [])].some((t) => t.toLowerCase().includes(text))
+  const shown = metrics.filter(
+    (m) =>
+      (kind === 'all' || m.kind === kind) &&
+      [m.name, m.id, m.formula ?? '', ...(m.reads ?? [])].some((t) => t.toLowerCase().includes(text))
   );
 
   return (
@@ -57,27 +60,25 @@ export function Metrics() {
           <div className="control-row">
             <span className="form-label">Kind</span>
             <div className="btn-group flex-wrap" role="group" aria-label="Kind">
-              {kinds.map((kind) => (
-                <React.Fragment key={kind}>
+              {kinds.map((k) => (
+                <React.Fragment key={k}>
                   <input
                     className="btn-check"
                     type="radio"
-                    id={`kind-${kind}`}
+                    id={`kind-${k}`}
                     name="kind"
-                    value={kind}
-                    defaultChecked={kind === 'all'}
+                    value={k}
+                    checked={kind === k}
+                    onChange={() => setKind(k)}
                   />
-                  <label className="btn btn-outline-secondary btn-sm" htmlFor={`kind-${kind}`}>
-                    {kind[0].toUpperCase() + kind.slice(1)}
+                  <label className="btn btn-outline-secondary btn-sm" htmlFor={`kind-${k}`}>
+                    {k[0].toUpperCase() + k.slice(1)}
                   </label>
                 </React.Fragment>
               ))}
             </div>
           </div>
         </fieldset>
-        <button className="btn btn-primary" type="button">
-          Apply
-        </button>
       </form>
 
       <MetricsTable metrics={shown} />
