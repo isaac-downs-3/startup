@@ -1,9 +1,13 @@
 import React from 'react';
 import { Cell } from './cell';
+import { rankOn, sortRows } from './rank';
 
-export function ScreenerTable({ metrics, columns, rows }) {
+export function ScreenerTable({ metrics, setup, rows }) {
   // Each column is a metric id; its name and unit come from the metric definition.
-  const shown = metrics.filter((m) => columns.includes(m.id));
+  const shown = metrics.filter((m) => setup.columns.includes(m.id));
+  const sortedBy = metrics.find((m) => m.id === setup.sort);
+  const sorted = sortRows(rows, setup.sort, setup.order);
+  const rank = rankOn(rows, setup.sort, setup.order);
 
   return (
     <>
@@ -11,8 +15,8 @@ export function ScreenerTable({ metrics, columns, rows }) {
       <div className="table-responsive">
         <table className="table table-hover results-table">
           <caption>
-            {rows.length} of {rows.length} companies &middot; {columns.length} columns &middot; sorted by Net
-            margin, high to low
+            {rows.length} of {rows.length} companies &middot; {shown.length} columns &middot; sorted by{' '}
+            {sortedBy?.name}, {setup.order === 'desc' ? 'high to low' : 'low to high'}
           </caption>
           <thead>
             <tr>
@@ -28,9 +32,9 @@ export function ScreenerTable({ metrics, columns, rows }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
+            {sorted.map((row) => (
               <tr key={row.ticker}>
-                <td>{i + 1}</td>
+                <td>{rank[row.ticker] ?? <abbr title="No value to rank on">&mdash;</abbr>}</td>
                 <th scope="row">{row.ticker}</th>
                 {shown.map((m) => (
                   <Cell key={m.id} value={row.values[m.id]} unit={m.unit} />

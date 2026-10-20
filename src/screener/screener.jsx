@@ -33,10 +33,9 @@ export function Screener() {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
-      {/* The controls' defaults only apply on their first render, so wait for the metrics. */}
-      {metrics.length > 0 && <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} />}
+      <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} />
       <DataSource />
-      <ScreenerTable metrics={metrics} columns={setup.columns} rows={rows} />
+      <ScreenerTable metrics={metrics} setup={setup} rows={rows} />
       <LiveUpdates updates={liveUpdates} />
     </main>
   );

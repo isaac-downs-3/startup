@@ -9,7 +9,9 @@ export function ScreenerControls({ metrics, setup, onChange }) {
 
   function toggleColumn(id) {
     const columns = setup.columns.includes(id) ? setup.columns.filter((c) => c !== id) : [...setup.columns, id];
-    onChange({ ...setup, columns });
+    // Hiding the sort column moves the sort to the first column still shown.
+    const sort = columns.includes(setup.sort) ? setup.sort : computed.find((m) => columns.includes(m.id)).id;
+    onChange({ ...setup, columns, sort });
   }
 
   return (
@@ -40,7 +42,12 @@ export function ScreenerControls({ metrics, setup, onChange }) {
             Sort by
           </label>
           <div className="sort-controls">
-            <select className="form-select" id="sort" defaultValue="net_margin">
+            <select
+              className="form-select"
+              id="sort"
+              value={setup.sort}
+              onChange={(e) => onChange({ ...setup, sort: e.target.value })}
+            >
               {shown.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
@@ -48,11 +55,27 @@ export function ScreenerControls({ metrics, setup, onChange }) {
               ))}
             </select>
             <div className="btn-group" role="group" aria-label="Sort direction">
-              <input className="btn-check" type="radio" id="order-desc" name="order" value="desc" defaultChecked />
+              <input
+                className="btn-check"
+                type="radio"
+                id="order-desc"
+                name="order"
+                value="desc"
+                checked={setup.order === 'desc'}
+                onChange={() => onChange({ ...setup, order: 'desc' })}
+              />
               <label className="btn btn-outline-secondary" htmlFor="order-desc">
                 High to low
               </label>
-              <input className="btn-check" type="radio" id="order-asc" name="order" value="asc" />
+              <input
+                className="btn-check"
+                type="radio"
+                id="order-asc"
+                name="order"
+                value="asc"
+                checked={setup.order === 'asc'}
+                onChange={() => onChange({ ...setup, order: 'asc' })}
+              />
               <label className="btn btn-outline-secondary" htmlFor="order-asc">
                 Low to high
               </label>
