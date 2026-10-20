@@ -5,19 +5,20 @@ export const columns = ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy'
 const noFcf = { missing: 'Not defined for banks: no free cash flow line in the financials' };
 const shortHistory = { missing: 'Needs 20 quarters of history; 12 available' };
 
+// Values are keyed by metric id and stored as plain numbers in the metric's unit.
 export const rows = [
-  { ticker: 'NVDA', values: ['$2.94', '55.8%', '0.99', '69.2%', '44.1%', '42.1×', '0.35'] },
-  { ticker: 'V', values: ['$10.70', '54.2%', '0.88', '10.1%', '51.3%', '31.4×', '0.62'] },
-  { ticker: 'META', values: ['$23.86', '38.3%', '0.97', '21.9%', '30.2%', '26.0×', '0.41'] },
-  { ticker: 'MSFT', values: ['$13.64', '35.8%', '0.93', '15.0%', '27.1%', '36.2×', '0.81'] },
-  { ticker: 'GOOGL', values: ['$8.94', '31.1%', '0.95', '13.6%', '20.4%', '22.7×', '0.28'] },
-  { ticker: 'NFLX', values: ['$19.83', '24.6%', '0.99', '15.4%', '19.6%', '48.3×', '0.44'] },
-  { ticker: 'AAPL', values: ['$6.59', '24.3%', '0.71', '4.9%', '26.1%', '34.8×', '0.90'] },
-  { ticker: 'JPM', values: ['$19.75', '21.9%', '0.79', '12.3%', noFcf, '12.9×', '0.74'] },
-  { ticker: 'AMZN', values: ['$5.53', '10.1%', '0.98', '10.9%', '2.9%', '38.9×', '0.12'] },
-  { ticker: 'XOM', values: ['$7.84', '9.9%', '0.46', '-2.6%', '9.1%', '14.2×', '0.55'] },
-  { ticker: 'AMD', values: ['$1.00', '8.0%', shortHistory, '24.8%', '8.7%', '130.5×', shortHistory] },
-  { ticker: 'TSLA', values: ['$1.66', '6.4%', '0.21', '-2.7%', '3.8%', '210.6×', '0.96'] },
+  { ticker: 'NVDA', values: { eps_ttm: 2.94, net_margin: 0.558, net_margin_pct: 0.99, revenue_yoy: 0.692, fcf_margin: 0.441, pe: 42.1, pe_pct: 0.35 } },
+  { ticker: 'V', values: { eps_ttm: 10.7, net_margin: 0.542, net_margin_pct: 0.88, revenue_yoy: 0.101, fcf_margin: 0.513, pe: 31.4, pe_pct: 0.62 } },
+  { ticker: 'META', values: { eps_ttm: 23.86, net_margin: 0.383, net_margin_pct: 0.97, revenue_yoy: 0.219, fcf_margin: 0.302, pe: 26.0, pe_pct: 0.41 } },
+  { ticker: 'MSFT', values: { eps_ttm: 13.64, net_margin: 0.358, net_margin_pct: 0.93, revenue_yoy: 0.15, fcf_margin: 0.271, pe: 36.2, pe_pct: 0.81 } },
+  { ticker: 'GOOGL', values: { eps_ttm: 8.94, net_margin: 0.311, net_margin_pct: 0.95, revenue_yoy: 0.136, fcf_margin: 0.204, pe: 22.7, pe_pct: 0.28 } },
+  { ticker: 'NFLX', values: { eps_ttm: 19.83, net_margin: 0.246, net_margin_pct: 0.99, revenue_yoy: 0.154, fcf_margin: 0.196, pe: 48.3, pe_pct: 0.44 } },
+  { ticker: 'AAPL', values: { eps_ttm: 6.59, net_margin: 0.243, net_margin_pct: 0.71, revenue_yoy: 0.049, fcf_margin: 0.261, pe: 34.8, pe_pct: 0.9 } },
+  { ticker: 'JPM', values: { eps_ttm: 19.75, net_margin: 0.219, net_margin_pct: 0.79, revenue_yoy: 0.123, fcf_margin: noFcf, pe: 12.9, pe_pct: 0.74 } },
+  { ticker: 'AMZN', values: { eps_ttm: 5.53, net_margin: 0.101, net_margin_pct: 0.98, revenue_yoy: 0.109, fcf_margin: 0.029, pe: 38.9, pe_pct: 0.12 } },
+  { ticker: 'XOM', values: { eps_ttm: 7.84, net_margin: 0.099, net_margin_pct: 0.46, revenue_yoy: -0.026, fcf_margin: 0.091, pe: 14.2, pe_pct: 0.55 } },
+  { ticker: 'AMD', values: { eps_ttm: 1.0, net_margin: 0.08, net_margin_pct: shortHistory, revenue_yoy: 0.248, fcf_margin: 0.087, pe: 130.5, pe_pct: shortHistory } },
+  { ticker: 'TSLA', values: { eps_ttm: 1.66, net_margin: 0.064, net_margin_pct: 0.21, revenue_yoy: -0.027, fcf_margin: 0.038, pe: 210.6, pe_pct: 0.96 } },
 ];
 
 // WebSocket placeholder: later these are pushed from the server as prices move.

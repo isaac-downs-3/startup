@@ -32,8 +32,8 @@ export function ScreenerTable({ metrics, columns, rows }) {
               <tr key={row.ticker}>
                 <td>{i + 1}</td>
                 <th scope="row">{row.ticker}</th>
-                {row.values.map((value, j) => (
-                  <Cell key={columns[j]} value={value} />
+                {shown.map((m) => (
+                  <Cell key={m.id} value={row.values[m.id]} unit={m.unit} />
                 ))}
               </tr>
             ))}
