@@ -1,4 +1,4 @@
-// Database placeholder: later these come from GET /api/watchlist for the signed-in user.
+// Database placeholder, served by getWatchlist() in service.js for the signed-in user.
 export const tickers = [
   { ticker: 'AAPL', added: '2025-05-02' },
   { ticker: 'AMD', added: '2025-05-02' },

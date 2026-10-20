@@ -1,9 +1,19 @@
 import React from 'react';
 import './watchlist.css';
 import { NavLink } from 'react-router-dom';
-import { tickers, setups } from './watchlistData';
+import { getWatchlist } from '../service';
 
 export function Watchlist() {
+  const [tickers, setTickers] = React.useState([]);
+  const [setups, setSetups] = React.useState([]);
+
+  React.useEffect(() => {
+    getWatchlist().then((watchlist) => {
+      setTickers(watchlist.tickers);
+      setSetups(watchlist.setups);
+    });
+  }, []);
+
   return (
     <main id="watchlist">
       <h2>Watchlist</h2>
