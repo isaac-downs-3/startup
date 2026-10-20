@@ -2,7 +2,7 @@ import React from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 
-export function Login({ onLogin }) {
+export function Login({ signedInAs, onLogin, onLogout }) {
   const navigate = useNavigate();
   const [userName, setUserName] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -33,6 +33,25 @@ export function Login({ onLogin }) {
   function signIn() {
     onLogin(name);
     navigate('/screener');
+  }
+
+  if (signedInAs) {
+    return (
+      <main id="login">
+        <h2>Welcome back</h2>
+        <p>
+          You are signed in as <b>{signedInAs}</b>.
+        </p>
+        <div className="login-actions">
+          <button className="btn btn-primary" type="button" onClick={() => navigate('/screener')}>
+            Open the screener
+          </button>
+          <button className="btn btn-outline-light" type="button" onClick={onLogout}>
+            Log out
+          </button>
+        </div>
+      </main>
+    );
   }
 
   return (

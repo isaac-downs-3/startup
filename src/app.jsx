@@ -18,6 +18,11 @@ export default function App() {
     setUserName(name);
   }
 
+  function logOut() {
+    localStorage.removeItem('userName');
+    setUserName('');
+  }
+
   return (
     <BrowserRouter>
       <div className="app">
@@ -26,7 +31,10 @@ export default function App() {
           <h1>Axon Trading House</h1>
           {userName && (
             <p className="signed-in">
-              Signed in as: <b>{userName}</b>
+              Signed in as: <b>{userName}</b>{' '}
+              <button className="btn btn-sm btn-outline-secondary" type="button" onClick={logOut}>
+                Log out
+              </button>
             </p>
           )}
           <nav>
@@ -61,7 +69,7 @@ export default function App() {
         </header>
 
         <Routes>
-          <Route path="/" element={<Login onLogin={logIn} />} />
+          <Route path="/" element={<Login signedInAs={userName} onLogin={logIn} onLogout={logOut} />} />
           <Route path="/screener" element={<Screener />} />
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/watchlist" element={<Watchlist />} />

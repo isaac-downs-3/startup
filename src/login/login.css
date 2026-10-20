@@ -24,6 +24,11 @@ main#login {
   margin-top: 1.5rem;
 }
 
+/* The signed-in view's buttons sit straight in main; match the form's width. */
+#login > .login-actions {
+  width: min(100%, 24rem);
+}
+
 /* Both buttons share the row equally. */
 #login .login-actions .btn {
   flex: 1;
