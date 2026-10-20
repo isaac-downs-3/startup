@@ -14,16 +14,16 @@ export function formatValue(value, unit) {
     case 'percentile':
       return value.toFixed(2);
     case 'multiple':
-      return `${value.toFixed(1)}×`;
+      return `${value.toFixed(size < 10 ? 2 : 1)}×`;
     default:
       return String(value);
   }
 }
 
-// 3020000000000 -> '3.02T'
+// Three significant figures: 3020000000000 -> '3.02T', 655000000000 -> '655B'.
 function compact(size) {
-  if (size >= 1e12) return `${(size / 1e12).toFixed(2)}T`;
-  if (size >= 1e9) return `${(size / 1e9).toFixed(1)}B`;
-  if (size >= 1e6) return `${(size / 1e6).toFixed(1)}M`;
+  if (size >= 1e12) return `${(size / 1e12).toPrecision(3)}T`;
+  if (size >= 1e9) return `${(size / 1e9).toPrecision(3)}B`;
+  if (size >= 1e6) return `${(size / 1e6).toPrecision(3)}M`;
   return size.toFixed(0);
 }
