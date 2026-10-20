@@ -15,6 +15,15 @@ export async function getScreener() {
 }
 
 // GET /api/watchlist: the signed-in user's saved tickers and screener setups.
-export async function getWatchlist() {
-  return { tickers, setups };
+// Until the database deliverable each user's watchlist is kept in localStorage,
+// starting from the sample one.
+export async function getWatchlist(userName) {
+  const stored = localStorage.getItem(`watchlist.${userName}`);
+  return stored ? JSON.parse(stored) : { tickers, setups };
+}
+
+// PUT /api/watchlist: replace the signed-in user's watchlist.
+export async function saveWatchlist(userName, watchlist) {
+  localStorage.setItem(`watchlist.${userName}`, JSON.stringify(watchlist));
+  return watchlist;
 }

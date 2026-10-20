@@ -1,4 +1,4 @@
-// Database placeholder, served by getWatchlist() in service.js for the signed-in user.
+// The sample watchlist every new user starts with, served by getWatchlist() in service.js.
 export const tickers = [
   { ticker: 'AAPL', added: '2025-05-02' },
   { ticker: 'AMD', added: '2025-05-02' },
@@ -14,26 +14,31 @@ export const tickers = [
   { ticker: 'XOM', added: '2025-06-11' },
 ];
 
+// Each saved setup holds the same fields as the screener's current setup.
 export const setups = [
   {
     name: 'Profitability',
-    columns: 'EPS TTM, Net margin, Net margin pct, Revenue YoY, FCF margin, P/E, P/E pct',
-    sortedBy: 'Net margin, high to low',
-    view: 'Values',
+    setup: {
+      columns: ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy', 'fcf_margin', 'pe', 'pe_pct'],
+      sort: 'net_margin',
+      order: 'desc',
+      view: 'values',
+    },
     lastUsed: '2025-06-30',
   },
   {
     name: 'Cheap vs own history',
-    columns: 'P/E, P/E pct, Net margin pct',
-    sortedBy: 'P/E pct, low to high',
-    view: 'Ranks',
+    setup: { columns: ['net_margin_pct', 'pe', 'pe_pct'], sort: 'pe_pct', order: 'asc', view: 'ranks' },
     lastUsed: '2025-06-27',
   },
   {
     name: 'Balance sheet',
-    columns: 'Debt / equity, Return on equity, Dividend yield, Market cap',
-    sortedBy: 'Debt / equity, low to high',
-    view: 'Values',
+    setup: {
+      columns: ['roe', 'debt_to_equity', 'dividend_yield', 'market_cap'],
+      sort: 'debt_to_equity',
+      order: 'asc',
+      view: 'values',
+    },
     lastUsed: '2025-06-18',
   },
 ];

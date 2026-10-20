@@ -1,18 +1,20 @@
 import React from 'react';
 import './watchlist.css';
 import { NavLink } from 'react-router-dom';
-import { getWatchlist } from '../service';
+import { getMetrics, getWatchlist } from '../service';
 
 export function Watchlist({ userName }) {
+  const [metrics, setMetrics] = React.useState([]);
   const [tickers, setTickers] = React.useState([]);
   const [setups, setSetups] = React.useState([]);
 
   React.useEffect(() => {
-    getWatchlist().then((watchlist) => {
+    getMetrics().then(setMetrics);
+    getWatchlist(userName).then((watchlist) => {
       setTickers(watchlist.tickers);
       setSetups(watchlist.setups);
     });
-  }, []);
+  }, [userName]);
 
   return (
     <main id="watchlist">
@@ -23,7 +25,7 @@ export function Watchlist({ userName }) {
       </p>
 
       <SavedTickers userName={userName} tickers={tickers} />
-      <SavedSetups userName={userName} setups={setups} />
+      <SavedSetups userName={userName} setups={setups} metrics={metrics} />
     </main>
   );
 }
@@ -72,7 +74,9 @@ function SavedTickers({ userName, tickers }) {
   );
 }
 
-function SavedSetups({ userName, setups }) {
+function SavedSetups({ userName, setups, metrics }) {
+  const nameOf = (id) => metrics.find((m) => m.id === id)?.name;
+
   return (
     <section className="saved-setups">
       <h3>Saved screener setups</h3>
@@ -92,15 +96,17 @@ function SavedSetups({ userName, setups }) {
             </tr>
           </thead>
           <tbody>
-            {setups.map((setup) => (
-              <tr key={setup.name}>
+            {setups.map(({ name, setup, lastUsed }) => (
+              <tr key={name}>
                 <th scope="row">
-                  <NavLink to="/screener">{setup.name}</NavLink>
+                  <NavLink to="/screener">{name}</NavLink>
                 </th>
-                <td>{setup.columns}</td>
-                <td>{setup.sortedBy}</td>
-                <td>{setup.view}</td>
-                <td>{setup.lastUsed}</td>
+                <td>{setup.columns.map(nameOf).join(', ')}</td>
+                <td>
+                  {nameOf(setup.sort)}, {setup.order === 'desc' ? 'high to low' : 'low to high'}
+                </td>
+                <td>{setup.view === 'ranks' ? 'Ranks' : 'Values'}</td>
+                <td>{lastUsed}</td>
               </tr>
             ))}
           </tbody>
