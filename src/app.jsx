@@ -9,24 +9,26 @@ import { Watchlist } from './watchlist/watchlist';
 import { About } from './about/about';
 
 export default function App() {
+  // Mocked authentication: the signed-in name is kept in localStorage until the
+  // service deliverable replaces it with a login endpoint and an auth cookie.
+  const [userName, setUserName] = React.useState(localStorage.getItem('userName') ?? '');
+
+  function logIn(name) {
+    localStorage.setItem('userName', name);
+    setUserName(name);
+  }
+
   return (
     <BrowserRouter>
       <div className="app">
         <header>
           <img src="/logo.svg" alt="Axon Trading House logo" width="48" height="48" />
           <h1>Axon Trading House</h1>
-          {/* "Signed in as" shows on every page except login. */}
-          <Routes>
-            <Route path="/" element={null} />
-            <Route
-              path="*"
-              element={
-                <p className="signed-in">
-                  Signed in as: <b>analyst</b>
-                </p>
-              }
-            />
-          </Routes>
+          {userName && (
+            <p className="signed-in">
+              Signed in as: <b>{userName}</b>
+            </p>
+          )}
           <nav>
             <menu className="nav nav-pills">
               <li className="nav-item">
@@ -59,7 +61,7 @@ export default function App() {
         </header>
 
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login onLogin={logIn} />} />
           <Route path="/screener" element={<Screener />} />
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/watchlist" element={<Watchlist />} />

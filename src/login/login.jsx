@@ -2,14 +2,17 @@ import React from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 
-export function Login() {
+export function Login({ onLogin }) {
   const navigate = useNavigate();
+  const [userName, setUserName] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   // Login is mocked for now: once the browser's required-field check passes,
-  // go to the screener. Real authentication replaces this in the service
-  // deliverable.
+  // sign in under the typed name and go to the screener. The password is not
+  // checked or stored until the service deliverable.
   function handleSubmit(event) {
     event.preventDefault();
+    onLogin(userName.trim());
     navigate('/screener');
   }
 
@@ -26,13 +29,29 @@ export function Login() {
             <label className="form-label" htmlFor="username">
               Username
             </label>
-            <input className="form-control" type="text" id="username" placeholder="your@email.com" required />
+            <input
+              className="form-control"
+              type="text"
+              id="username"
+              placeholder="your@email.com"
+              required
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
           </p>
           <p>
             <label className="form-label" htmlFor="password">
               Password
             </label>
-            <input className="form-control" type="password" id="password" placeholder="password" required />
+            <input
+              className="form-control"
+              type="password"
+              id="password"
+              placeholder="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </p>
           <div className="login-actions">
             <button className="btn btn-primary" type="submit">
