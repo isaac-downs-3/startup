@@ -10,6 +10,15 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
   const rank = rankOn(rows, setup.sort, setup.order);
   const visible = sortRows(rows.filter(matches(filter)), setup.sort, setup.order);
 
+  // In the Ranks view each cell is the company's rank on that column's metric,
+  // in the same direction as the sort. A missing value keeps its dash and reason.
+  const ranks = setup.view === 'ranks';
+  const columnRanks = Object.fromEntries(shown.map((m) => [m.id, rankOn(rows, m.id, setup.order)]));
+  function cellValue(row, m) {
+    const value = row.values[m.id];
+    return ranks && typeof value === 'number' ? columnRanks[m.id][row.ticker] : value;
+  }
+
   return (
     <>
       <h3>Results</h3>
@@ -18,6 +27,7 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
           <caption>
             {visible.length} of {rows.length} companies &middot; {shown.length} columns &middot; sorted by{' '}
             {sortedBy?.name}, {setup.order === 'desc' ? 'high to low' : 'low to high'}
+            {ranks && <> &middot; showing ranks</>}
           </caption>
           <thead>
             <tr>
@@ -27,7 +37,7 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
                 <th scope="col" key={m.id}>
                   {m.name}
                   <br />
-                  <small>{m.unit}</small>
+                  <small>{ranks ? `rank, 1 = ${setup.order === 'desc' ? 'highest' : 'lowest'}` : m.unit}</small>
                 </th>
               ))}
             </tr>
@@ -38,7 +48,7 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
                 <td>{rank[row.ticker] ?? <abbr title="No value to rank on">&mdash;</abbr>}</td>
                 <th scope="row">{row.ticker}</th>
                 {shown.map((m) => (
-                  <Cell key={m.id} value={row.values[m.id]} unit={m.unit} />
+                  <Cell key={m.id} value={cellValue(row, m)} unit={ranks ? 'rank' : m.unit} />
                 ))}
               </tr>
             ))}

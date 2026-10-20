@@ -13,6 +13,8 @@ export function formatValue(value, unit) {
       return `${(value * 100).toFixed(size < 0.01 ? 2 : 1)}%`;
     case 'percentile':
       return value.toFixed(2);
+    case 'rank':
+      return String(value);
     case 'multiple':
       return `${value.toFixed(size < 10 ? 2 : 1)}×`;
     default:

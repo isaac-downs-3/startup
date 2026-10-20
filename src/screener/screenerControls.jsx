@@ -34,11 +34,27 @@ export function ScreenerControls({ metrics, setup, onChange, filter, onFilter })
         <div className="control-row">
           <span className="form-label">Show</span>
           <div className="btn-group" role="group" aria-label="Show">
-            <input className="btn-check" type="radio" id="view-values" name="view" value="values" defaultChecked />
+            <input
+              className="btn-check"
+              type="radio"
+              id="view-values"
+              name="view"
+              value="values"
+              checked={setup.view === 'values'}
+              onChange={() => onChange({ ...setup, view: 'values' })}
+            />
             <label className="btn btn-outline-secondary" htmlFor="view-values">
               Values
             </label>
-            <input className="btn-check" type="radio" id="view-ranks" name="view" value="ranks" />
+            <input
+              className="btn-check"
+              type="radio"
+              id="view-ranks"
+              name="view"
+              value="ranks"
+              checked={setup.view === 'ranks'}
+              onChange={() => onChange({ ...setup, view: 'ranks' })}
+            />
             <label className="btn btn-outline-secondary" htmlFor="view-ranks">
               Ranks
             </label>
