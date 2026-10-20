@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 // The controls change the setup as you use them; there is nothing to apply.
-export function ScreenerControls({ metrics, setup, onChange }) {
+export function ScreenerControls({ metrics, setup, onChange, filter, onFilter }) {
   // Every computed metric can be a column.
   const computed = metrics.filter((m) => m.kind === 'metric');
   const shown = computed.filter((m) => setup.columns.includes(m.id));
@@ -22,7 +22,14 @@ export function ScreenerControls({ metrics, setup, onChange }) {
           <label className="form-label" htmlFor="filter">
             Filter tickers
           </label>
-          <input className="form-control" type="search" id="filter" placeholder="AAPL, MSFT..." />
+          <input
+            className="form-control"
+            type="search"
+            id="filter"
+            placeholder="AAPL, MSFT..."
+            value={filter}
+            onChange={(e) => onFilter(e.target.value)}
+          />
         </div>
         <div className="control-row">
           <span className="form-label">Show</span>

@@ -13,6 +13,7 @@ export function Screener() {
   const [metrics, setMetrics] = React.useState([]);
   const [rows, setRows] = React.useState([]);
   const [setup, setSetup] = React.useState(defaultSetup);
+  const [filter, setFilter] = React.useState('');
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
@@ -33,9 +34,9 @@ export function Screener() {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
-      <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} />
+      <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
       <DataSource />
-      <ScreenerTable metrics={metrics} setup={setup} rows={rows} />
+      <ScreenerTable metrics={metrics} setup={setup} rows={rows} filter={filter} />
       <LiveUpdates updates={liveUpdates} />
     </main>
   );
