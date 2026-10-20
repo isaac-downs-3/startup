@@ -8,10 +8,18 @@ const kinds = ['all', 'metric', 'flow', 'stock', 'rate', 'label'];
 
 export function Metrics() {
   const [metrics, setMetrics] = React.useState([]);
+  const [query, setQuery] = React.useState('');
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
   }, []);
+
+  // A value matches when the text appears in its name, identifier, formula, or
+  // the raw fields it reads, so "revenue" also finds every metric built on revenue.
+  const text = query.trim().toLowerCase();
+  const shown = metrics.filter((m) =>
+    [m.name, m.id, m.formula ?? '', ...(m.reads ?? [])].some((t) => t.toLowerCase().includes(text))
+  );
 
   return (
     <main id="metrics">
@@ -30,15 +38,21 @@ export function Metrics() {
         (sector). <b>Grain</b> is how often the value is reported.
       </p>
 
-      {/* Filtering is wired up with reactivity in the next deliverable. */}
-      <form className="metrics-filter">
+      <form className="metrics-filter" onSubmit={(e) => e.preventDefault()}>
         <fieldset>
           <legend>Find a value</legend>
           <div className="control-row">
             <label className="form-label" htmlFor="filter">
               Filter
             </label>
-            <input className="form-control" type="search" id="filter" placeholder="revenue, margin, shares..." />
+            <input
+              className="form-control"
+              type="search"
+              id="filter"
+              placeholder="revenue, margin, shares..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
           <div className="control-row">
             <span className="form-label">Kind</span>
@@ -66,7 +80,7 @@ export function Metrics() {
         </button>
       </form>
 
-      <MetricsTable metrics={metrics} />
+      <MetricsTable metrics={shown} />
     </main>
   );
 }
