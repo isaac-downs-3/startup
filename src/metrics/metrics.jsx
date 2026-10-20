@@ -81,7 +81,7 @@ export function Metrics() {
         </fieldset>
       </form>
 
-      <MetricsTable metrics={shown} />
+      <MetricsTable metrics={shown} total={metrics.length} />
     </main>
   );
 }

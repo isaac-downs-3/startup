@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function MetricsTable({ metrics }) {
+export function MetricsTable({ metrics, total }) {
   const computed = metrics.filter((m) => m.kind === 'metric').length;
   const raw = metrics.length - computed;
 
@@ -8,8 +8,8 @@ export function MetricsTable({ metrics }) {
     <div className="table-responsive">
       <table className="table metrics-table">
         <caption>
-          {metrics.length} values &middot; {computed} metrics and {raw} raw fields &middot; coverage across 12
-          companies
+          {metrics.length} of {total} values &middot; {plural(computed, 'metric')} and{' '}
+          {plural(raw, 'raw field')} &middot; coverage across 12 companies
         </caption>
         <thead>
           <tr>
@@ -25,6 +25,11 @@ export function MetricsTable({ metrics }) {
           {metrics.map((metric) => (
             <MetricRow key={metric.id} metric={metric} />
           ))}
+          {metrics.length === 0 && total > 0 && (
+            <tr>
+              <td colSpan="6">No values match the filter.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -73,4 +78,9 @@ function Formula({ metric }) {
       </p>
     </details>
   );
+}
+
+// plural(1, 'metric') -> '1 metric', plural(5, 'metric') -> '5 metrics'
+function plural(count, word) {
+  return `${count} ${word}${count === 1 ? '' : 's'}`;
 }
