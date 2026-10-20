@@ -9,16 +9,26 @@ import { getMetrics, getScreener } from '../service';
 import { defaultSetup, liveUpdates } from './screenerData';
 
 // The screener loads its data once and passes it down to the parts that show it.
-export function Screener() {
+export function Screener({ userName }) {
   const [metrics, setMetrics] = React.useState([]);
   const [rows, setRows] = React.useState([]);
-  const [setup, setSetup] = React.useState(defaultSetup);
+  // Each user's setup is kept in localStorage until the database deliverable,
+  // so the screener opens the way they left it.
+  const setupKey = `screenerSetup.${userName}`;
+  const [setup, setSetup] = React.useState(() => ({
+    ...defaultSetup,
+    ...JSON.parse(localStorage.getItem(setupKey) ?? '{}'),
+  }));
   const [filter, setFilter] = React.useState('');
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
     getScreener().then(setRows);
   }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem(setupKey, JSON.stringify(setup));
+  }, [setupKey, setup]);
 
   return (
     <main id="screener">
