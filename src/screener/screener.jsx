@@ -16,6 +16,7 @@ export function Screener({ userName }) {
   const [setup, setSetup] = React.useState(() => readSetup(userName));
   const [filter, setFilter] = React.useState('');
   const [updates, setUpdates] = React.useState([]);
+  const [paused, setPaused] = React.useState(false);
 
   // The feed's callback reads the latest rows through a ref, so a new price
   // doesn't restart the feed.
@@ -32,11 +33,11 @@ export function Screener({ userName }) {
   }, [userName, setup]);
 
   // Once the rows are loaded, start the simulated price feed, and stop it when
-  // the screener closes. Each new price recomputes that company's price-driven
+  // it is paused or the screener closes. Resuming starts it from the current prices. Each new price recomputes that company's price-driven
   // metrics, and the table re-sorts and re-ranks from the new rows.
   const loaded = rows.length > 0;
   React.useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || paused) return;
     const prices = Object.fromEntries(rows.map((row) => [row.ticker, row.price]));
     return startPriceFeed(prices, (quote) => {
       const before = rowsRef.current.find((row) => row.ticker === quote.ticker);
@@ -45,7 +46,7 @@ export function Screener({ userName }) {
       // The newest move goes on top; keep the last ten.
       setUpdates((current) => [describeMove(before, after, quote.time), ...current].slice(0, 10));
     });
-  }, [loaded]);
+  }, [loaded, paused]);
 
   return (
     <main id="screener">
@@ -72,7 +73,7 @@ export function Screener({ userName }) {
         filter={filter}
         lastMove={updates[0]}
       />
-      <LiveUpdates updates={updates} />
+      <LiveUpdates updates={updates} paused={paused} onPause={() => setPaused((p) => !p)} />
     </main>
   );
 }

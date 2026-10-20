@@ -161,6 +161,14 @@ main#screener > * {
   }
 }
 
+/* Live updates heading with the Pause / Resume button at its right. */
+.live-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
 /* Live updates: a pulsing dot marks the feed as live, and each update is a
    row with a colored edge: green when the price rose, red when it fell,
    accent for a new report. */
@@ -223,6 +231,12 @@ main#screener > * {
     background-color: var(--bg);
     transform: none;
   }
+}
+
+/* Paused: the dot stops pulsing and goes grey. */
+.live-updates h3.paused::before {
+  animation: none;
+  background-color: var(--muted);
 }
 
 @keyframes live-pulse {

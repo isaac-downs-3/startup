@@ -1,9 +1,14 @@
 import React from 'react';
 
-export function LiveUpdates({ updates }) {
+export function LiveUpdates({ updates, paused, onPause }) {
   return (
     <section className="live-updates">
-      <h3>Live updates</h3>
+      <div className="live-header">
+        <h3 className={paused ? 'paused' : undefined}>Live updates</h3>
+        <button className="btn btn-sm btn-outline-secondary" type="button" onClick={onPause}>
+          {paused ? 'Resume' : 'Pause'}
+        </button>
+      </div>
       <p>
         WebSocket placeholder. For now prices are simulated in the browser every few seconds. Each move
         recomputes that company's price-driven metrics, so rows re-rank without a refresh. Later the server
