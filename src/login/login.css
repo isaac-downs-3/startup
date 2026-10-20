@@ -39,3 +39,16 @@ main#login {
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
 }
+
+/* A quieter way in under the main buttons: no name or password needed. */
+#login .guest {
+  display: block;
+  margin: 0.75rem auto 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+#login .guest:hover,
+#login .guest:focus-visible {
+  color: var(--accent);
+}

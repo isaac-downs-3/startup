@@ -2,6 +2,10 @@ import React from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 
+// A guest skips the form. Their watchlist and setups are kept under this name,
+// so no account can take it.
+const guestName = 'Guest';
+
 export function Login({ signedInAs, onLogin, onLogout }) {
   const navigate = useNavigate();
   const [userName, setUserName] = React.useState('');
@@ -17,21 +21,25 @@ export function Login({ signedInAs, onLogin, onLogout }) {
       setError(`There is no account for ${name}. Create one first.`);
       return;
     }
-    signIn();
+    signIn(name);
   }
 
   function createAccount() {
     const accounts = readAccounts();
+    if (name.toLowerCase() === guestName.toLowerCase()) {
+      setError(`${guestName} is reserved. Use Continue as guest below, or pick another name.`);
+      return;
+    }
     if (accounts.includes(name)) {
       setError(`${name} already has an account. Log in instead.`);
       return;
     }
     localStorage.setItem('accounts', JSON.stringify([...accounts, name]));
-    signIn();
+    signIn(name);
   }
 
-  function signIn() {
-    onLogin(name);
+  function signIn(as) {
+    onLogin(as);
     navigate('/screener');
   }
 
@@ -112,6 +120,9 @@ export function Login({ signedInAs, onLogin, onLogout }) {
               Create account
             </button>
           </div>
+          <button className="btn btn-link guest" type="button" onClick={() => signIn(guestName)}>
+            Continue as guest
+          </button>
         </fieldset>
       </form>
     </main>
