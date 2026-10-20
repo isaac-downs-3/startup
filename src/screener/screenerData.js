@@ -1,14 +1,6 @@
 // Sample screener results as of the 2025-06-30 close. Later these come from
 // GET /api/screener. A value of { missing: reason } could not be computed.
-export const columns = [
-  { id: 'eps_ttm', unit: 'currency per share' },
-  { id: 'net_margin', unit: 'ratio' },
-  { id: 'net_margin_pct', unit: 'percentile' },
-  { id: 'revenue_yoy', unit: 'ratio' },
-  { id: 'fcf_margin', unit: 'ratio' },
-  { id: 'pe', unit: 'multiple' },
-  { id: 'pe_pct', unit: 'percentile' },
-];
+export const columns = ['eps_ttm', 'net_margin', 'net_margin_pct', 'revenue_yoy', 'fcf_margin', 'pe', 'pe_pct'];
 
 const noFcf = { missing: 'Not defined for banks: no free cash flow line in the financials' };
 const shortHistory = { missing: 'Needs 20 quarters of history; 12 available' };

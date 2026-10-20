@@ -27,7 +27,7 @@ export function Screener() {
 
       <ScreenerControls metrics={metrics} columns={columns} />
       <DataSource />
-      <ScreenerTable columns={columns} rows={rows} />
+      <ScreenerTable metrics={metrics} columns={columns} rows={rows} />
       <LiveUpdates updates={liveUpdates} />
     </main>
   );

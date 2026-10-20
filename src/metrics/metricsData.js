@@ -4,6 +4,7 @@ export const metrics = [
   {
     id: 'eps_ttm',
     name: 'EPS, trailing twelve months',
+    unit: 'currency per share',
     kind: 'metric',
     grain: 'quarter',
     coverage: 1.0,
@@ -13,6 +14,7 @@ export const metrics = [
   {
     id: 'net_margin',
     name: 'Net margin',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'quarter',
     coverage: 1.0,
@@ -22,6 +24,7 @@ export const metrics = [
   {
     id: 'net_margin_pct',
     name: 'Net margin percentile vs own history',
+    unit: 'percentile',
     kind: 'metric',
     grain: 'quarter',
     coverage: 0.92,
@@ -31,6 +34,7 @@ export const metrics = [
   {
     id: 'revenue_yoy',
     name: 'Revenue growth, year over year',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'quarter',
     coverage: 1.0,
@@ -40,6 +44,7 @@ export const metrics = [
   {
     id: 'fcf_margin',
     name: 'Free cash flow margin',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'quarter',
     coverage: 0.92,
@@ -49,6 +54,7 @@ export const metrics = [
   {
     id: 'pe',
     name: 'Price / earnings',
+    unit: 'multiple',
     kind: 'metric',
     grain: 'daily',
     coverage: 1.0,
@@ -58,6 +64,7 @@ export const metrics = [
   {
     id: 'pe_pct',
     name: 'P/E percentile vs own history',
+    unit: 'percentile',
     kind: 'metric',
     grain: 'quarter',
     coverage: 0.92,
@@ -67,6 +74,7 @@ export const metrics = [
   {
     id: 'gross_margin',
     name: 'Gross margin',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'quarter',
     coverage: 0.83,
@@ -76,6 +84,7 @@ export const metrics = [
   {
     id: 'roe',
     name: 'Return on equity',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'quarter',
     coverage: 1.0,
@@ -85,6 +94,7 @@ export const metrics = [
   {
     id: 'debt_to_equity',
     name: 'Debt / equity',
+    unit: 'multiple',
     kind: 'metric',
     grain: 'quarter',
     coverage: 1.0,
@@ -94,6 +104,7 @@ export const metrics = [
   {
     id: 'dividend_yield',
     name: 'Dividend yield',
+    unit: 'ratio',
     kind: 'metric',
     grain: 'daily',
     coverage: 0.67,
@@ -103,6 +114,7 @@ export const metrics = [
   {
     id: 'market_cap',
     name: 'Market capitalization',
+    unit: 'currency',
     kind: 'metric',
     grain: 'daily',
     coverage: 1.0,
@@ -120,8 +132,3 @@ export const metrics = [
   { id: 'price', name: 'Price', kind: 'rate', grain: 'daily', coverage: 1.0 },
   { id: 'sector', name: 'Sector', kind: 'label', grain: '—', coverage: 1.0 },
 ];
-
-// Display name for a metric id, e.g. 'net_margin' -> 'Net margin'.
-export function metricName(id) {
-  return metrics.find((m) => m.id === id).name;
-}

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 export function ScreenerControls({ metrics, columns }) {
   // Every computed metric can be a column; the ones currently shown start checked.
   const computed = metrics.filter((m) => m.kind === 'metric');
-  const shown = computed.filter((m) => columns.some((c) => c.id === m.id));
+  const shown = computed.filter((m) => columns.includes(m.id));
 
   return (
     <form className="screener-controls">

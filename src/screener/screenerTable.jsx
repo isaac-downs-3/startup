@@ -1,8 +1,10 @@
 import React from 'react';
-import { metricName } from '../metrics/metricsData';
 import { Cell } from './cell';
 
-export function ScreenerTable({ columns, rows }) {
+export function ScreenerTable({ metrics, columns, rows }) {
+  // Each column is a metric id; its name and unit come from the metric definition.
+  const shown = columns.map((id) => metrics.find((m) => m.id === id));
+
   return (
     <>
       <h3>Results</h3>
@@ -16,11 +18,11 @@ export function ScreenerTable({ columns, rows }) {
             <tr>
               <th scope="col">Rank</th>
               <th scope="col">Ticker</th>
-              {columns.map((c) => (
-                <th scope="col" key={c.id}>
-                  {metricName(c.id)}
+              {shown.map((m) => (
+                <th scope="col" key={m.id}>
+                  {m.name}
                   <br />
-                  <small>{c.unit}</small>
+                  <small>{m.unit}</small>
                 </th>
               ))}
             </tr>
@@ -31,7 +33,7 @@ export function ScreenerTable({ columns, rows }) {
                 <td>{i + 1}</td>
                 <th scope="row">{row.ticker}</th>
                 {row.values.map((value, j) => (
-                  <Cell key={columns[j].id} value={value} />
+                  <Cell key={columns[j]} value={value} />
                 ))}
               </tr>
             ))}
