@@ -1,20 +1,36 @@
 import React from 'react';
 import './watchlist.css';
 import { NavLink } from 'react-router-dom';
-import { getMetrics, getWatchlist } from '../service';
+import { getMetrics, getWatchlist, saveWatchlist } from '../service';
 
 export function Watchlist({ userName }) {
   const [metrics, setMetrics] = React.useState([]);
-  const [tickers, setTickers] = React.useState([]);
-  const [setups, setSetups] = React.useState([]);
+  // Null until it loads, so nothing can save over it before then.
+  const [watchlist, setWatchlist] = React.useState(null);
+  const tickers = watchlist?.tickers ?? [];
+  const setups = watchlist?.setups ?? [];
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
-    getWatchlist(userName).then((watchlist) => {
-      setTickers(watchlist.tickers);
-      setSetups(watchlist.setups);
-    });
+    getWatchlist(userName).then(setWatchlist);
   }, [userName]);
+
+  // Every change is shown at once and saved for the user.
+  function update(changes) {
+    const next = { ...watchlist, ...changes };
+    setWatchlist(next);
+    saveWatchlist(userName, next);
+  }
+
+  function addTicker(ticker) {
+    const added = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+    const next = [...tickers, { ticker, added }].sort((a, b) => a.ticker.localeCompare(b.ticker));
+    update({ tickers: next });
+  }
+
+  function removeTicker(ticker) {
+    update({ tickers: tickers.filter((t) => t.ticker !== ticker) });
+  }
 
   return (
     <main id="watchlist">
@@ -24,25 +40,65 @@ export function Watchlist({ userName }) {
         it follows you between sessions and devices.
       </p>
 
-      <SavedTickers userName={userName} tickers={tickers} />
+      <SavedTickers
+        userName={userName}
+        tickers={tickers}
+        loaded={watchlist !== null}
+        onAdd={addTicker}
+        onRemove={removeTicker}
+      />
       <SavedSetups userName={userName} setups={setups} metrics={metrics} />
     </main>
   );
 }
 
-function SavedTickers({ userName, tickers }) {
+function SavedTickers({ userName, tickers, loaded, onAdd, onRemove }) {
+  const [entry, setEntry] = React.useState('');
+  const [error, setError] = React.useState('');
+
+  function add(event) {
+    event.preventDefault();
+    const ticker = entry.trim().toUpperCase();
+    if (!/^[A-Z][A-Z.]{0,5}$/.test(ticker)) {
+      setError(`${ticker} is not a ticker symbol. Use up to 6 letters, like COST or BRK.B.`);
+      return;
+    }
+    if (tickers.some((t) => t.ticker === ticker)) {
+      setError(`${ticker} is already on your watchlist.`);
+      return;
+    }
+    onAdd(ticker);
+    setEntry('');
+    setError('');
+  }
+
   return (
     <section className="saved-tickers">
       <h3>Saved tickers</h3>
-      <form className="input-group" id="add-ticker">
+      <form className="input-group" id="add-ticker" onSubmit={add}>
         <label className="input-group-text" htmlFor="ticker">
           Add ticker
         </label>
-        <input className="form-control" type="text" id="ticker" placeholder="e.g. COST" />
-        <button className="btn btn-primary" type="button">
+        <input
+          className="form-control"
+          type="text"
+          id="ticker"
+          placeholder="e.g. COST"
+          value={entry}
+          onChange={(e) => {
+            setEntry(e.target.value);
+            setError('');
+          }}
+        />
+        <button className="btn btn-primary" type="submit" disabled={!loaded || !entry.trim()}>
           Add
         </button>
       </form>
+      {error && (
+        <p className="ticker-error" role="alert">
+          {error}
+        </p>
+      )}
       <div className="table-responsive">
         <table className="table table-hover tickers-table">
           <caption>
@@ -61,7 +117,7 @@ function SavedTickers({ userName, tickers }) {
                 <th scope="row">{ticker}</th>
                 <td>{added}</td>
                 <td>
-                  <button className="btn btn-sm btn-outline-danger" type="button">
+                  <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => onRemove(ticker)}>
                     Remove
                   </button>
                 </td>

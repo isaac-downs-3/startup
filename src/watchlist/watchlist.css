@@ -26,6 +26,12 @@ main#watchlist > p {
   margin-bottom: 1rem;
 }
 
+#watchlist .ticker-error {
+  margin: -0.5rem 0 1rem;
+  color: var(--neg);
+  font-size: 0.85rem;
+}
+
 #watchlist .input-group-text {
   background-color: var(--panel);
   border-color: var(--panel-edge);
