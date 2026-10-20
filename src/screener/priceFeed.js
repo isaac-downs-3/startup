@@ -36,7 +36,8 @@ export function repriceRow(row, price) {
   return { ...row, price, values };
 }
 
-// One line for the Live updates list: the price move and what it did to P/E.
+// One entry for the Live updates list: the price move, what it did to P/E, and
+// which metrics changed, so the table can flash those cells.
 let nextId = 0;
 export function describeMove(before, after, time) {
   const change = after.price / before.price - 1;
@@ -47,6 +48,8 @@ export function describeMove(before, after, time) {
     id: nextId++,
     time: time.toLocaleTimeString('en-US', { hour12: false }),
     kind: change < 0 ? 'down' : 'up',
+    ticker: after.ticker,
+    changed: Object.keys(after.values).filter((id) => after.values[id] !== before.values[id]),
     text: `${after.ticker} price ${price(before)} → ${price(after)} (${change < 0 ? '' : '+'}${(change * 100).toFixed(1)}%)${peText}`,
   };
 }

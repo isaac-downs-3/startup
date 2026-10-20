@@ -64,7 +64,14 @@ export function Screener({ userName }) {
 
       <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
       <DataSource />
-      <ScreenerTable metrics={metrics} setup={setup} onChange={setSetup} rows={rows} filter={filter} />
+      <ScreenerTable
+        metrics={metrics}
+        setup={setup}
+        onChange={setSetup}
+        rows={rows}
+        filter={filter}
+        lastMove={updates[0]}
+      />
       <LiveUpdates updates={updates} />
     </main>
   );

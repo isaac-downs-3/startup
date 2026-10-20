@@ -140,6 +140,27 @@ main#screener > * {
   }
 }
 
+/* A cell a price move just changed fades from green (rose) or red (fell). */
+.results-table td.flash-up {
+  animation: cell-up 1.6s ease-out;
+}
+
+.results-table td.flash-down {
+  animation: cell-down 1.6s ease-out;
+}
+
+@keyframes cell-up {
+  from {
+    background-color: rgb(74 222 128 / 30%);
+  }
+}
+
+@keyframes cell-down {
+  from {
+    background-color: rgb(248 113 113 / 30%);
+  }
+}
+
 /* Live updates: a pulsing dot marks the feed as live, and each update is a
    row with a colored edge: green when the price rose, red when it fell,
    accent for a new report. */
@@ -217,7 +238,8 @@ main#screener > * {
 /* Honor the system "reduce motion" setting. */
 @media (prefers-reduced-motion: reduce) {
   .live-updates h3::before,
-  .live-updates li:first-child {
+  .live-updates li:first-child,
+  .results-table td[class*='flash-'] {
     animation: none;
   }
 }

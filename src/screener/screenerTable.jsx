@@ -4,7 +4,7 @@ import { rankOn, sortRows } from './rank';
 
 const sortWord = { desc: 'descending', asc: 'ascending' };
 
-export function ScreenerTable({ metrics, setup, onChange, rows, filter }) {
+export function ScreenerTable({ metrics, setup, onChange, rows, filter, lastMove }) {
   // Each column is a metric id; its name and unit come from the metric definition.
   const shown = metrics.filter((m) => setup.columns.includes(m.id));
   const sortedBy = metrics.find((m) => m.id === setup.sort);
@@ -58,9 +58,19 @@ export function ScreenerTable({ metrics, setup, onChange, rows, filter }) {
               <tr key={row.ticker}>
                 <td>{rank[row.ticker] ?? <abbr title="No value to rank on">&mdash;</abbr>}</td>
                 <th scope="row">{row.ticker}</th>
-                {shown.map((m) => (
-                  <Cell key={m.id} value={cellValue(row, m)} unit={ranks ? 'rank' : m.unit} />
-                ))}
+                {shown.map((m) => {
+                  // A cell the last price move changed flashes green or red. Its key
+                  // includes the move, so each new move replays the flash.
+                  const moved = lastMove?.ticker === row.ticker && lastMove.changed.includes(m.id);
+                  return (
+                    <Cell
+                      key={moved ? `${m.id}-${lastMove.id}` : m.id}
+                      value={cellValue(row, m)}
+                      unit={ranks ? 'rank' : m.unit}
+                      flash={moved ? lastMove.kind : null}
+                    />
+                  );
+                })}
               </tr>
             ))}
             {visible.length === 0 && rows.length > 0 && (
