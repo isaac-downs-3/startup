@@ -6,13 +6,32 @@ export function Login({ onLogin }) {
   const navigate = useNavigate();
   const [userName, setUserName] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+  const name = userName.trim();
 
-  // Login is mocked for now: once the browser's required-field check passes,
-  // sign in under the typed name and go to the screener. The password is not
-  // checked or stored until the service deliverable.
-  function handleSubmit(event) {
+  // Login is mocked for now. Accounts are a list of names in localStorage; the
+  // password is never checked or stored until the service deliverable.
+  function logIn(event) {
     event.preventDefault();
-    onLogin(userName.trim());
+    if (!readAccounts().includes(name)) {
+      setError(`There is no account for ${name}. Create one first.`);
+      return;
+    }
+    signIn();
+  }
+
+  function createAccount() {
+    const accounts = readAccounts();
+    if (accounts.includes(name)) {
+      setError(`${name} already has an account. Log in instead.`);
+      return;
+    }
+    localStorage.setItem('accounts', JSON.stringify([...accounts, name]));
+    signIn();
+  }
+
+  function signIn() {
+    onLogin(name);
     navigate('/screener');
   }
 
@@ -22,7 +41,7 @@ export function Login({ onLogin }) {
       <p>Screen and rank companies on metrics you can see the formula for.</p>
 
       {/* The inputs have no name, so nothing typed here ends up in a URL. */}
-      <form className="card" onSubmit={handleSubmit}>
+      <form className="card" onSubmit={logIn}>
         <fieldset className="card-body">
           <legend className="card-title">Log in or create an account</legend>
           <p>
@@ -36,7 +55,10 @@ export function Login({ onLogin }) {
               placeholder="your@email.com"
               required
               value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => {
+                setUserName(e.target.value);
+                setError('');
+              }}
             />
           </p>
           <p>
@@ -53,11 +75,21 @@ export function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
             />
           </p>
+          {error && (
+            <p className="alert alert-danger" role="alert">
+              {error}
+            </p>
+          )}
           <div className="login-actions">
-            <button className="btn btn-primary" type="submit">
+            <button className="btn btn-primary" type="submit" disabled={!name || !password}>
               Log in
             </button>
-            <button className="btn btn-outline-light" type="submit">
+            <button
+              className="btn btn-outline-light"
+              type="button"
+              disabled={!name || !password}
+              onClick={createAccount}
+            >
               Create account
             </button>
           </div>
@@ -65,4 +97,8 @@ export function Login({ onLogin }) {
       </form>
     </main>
   );
+}
+
+function readAccounts() {
+  return JSON.parse(localStorage.getItem('accounts') ?? '[]');
 }

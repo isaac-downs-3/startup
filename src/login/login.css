@@ -28,3 +28,9 @@ main#login {
 #login .login-actions .btn {
   flex: 1;
 }
+
+#login .alert {
+  margin: 1rem 0 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+}
