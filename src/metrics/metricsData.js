@@ -1,4 +1,4 @@
-// Sample metric definitions and coverage. Later these come from GET /api/metrics.
+// Sample metric definitions and coverage, served by getMetrics() in service.js.
 // Metrics have a formula and the raw fields it reads; raw fields come from Finnhub.
 export const metrics = [
   {

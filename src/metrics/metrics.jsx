@@ -2,11 +2,17 @@ import React from 'react';
 import './metrics.css';
 import { NavLink } from 'react-router-dom';
 import { MetricsTable } from './metricsTable';
-import { metrics } from './metricsData';
+import { getMetrics } from '../service';
 
 const kinds = ['all', 'metric', 'flow', 'stock', 'rate', 'label'];
 
 export function Metrics() {
+  const [metrics, setMetrics] = React.useState([]);
+
+  React.useEffect(() => {
+    getMetrics().then(setMetrics);
+  }, []);
+
   return (
     <main id="metrics">
       <h2>Metrics</h2>
