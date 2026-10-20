@@ -2,7 +2,9 @@ import React from 'react';
 import { Cell } from './cell';
 import { rankOn, sortRows } from './rank';
 
-export function ScreenerTable({ metrics, setup, rows, filter }) {
+const sortWord = { desc: 'descending', asc: 'ascending' };
+
+export function ScreenerTable({ metrics, setup, onChange, rows, filter }) {
   // Each column is a metric id; its name and unit come from the metric definition.
   const shown = metrics.filter((m) => setup.columns.includes(m.id));
   const sortedBy = metrics.find((m) => m.id === setup.sort);
@@ -14,6 +16,12 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
   // in the same direction as the sort. A missing value keeps its dash and reason.
   const ranks = setup.view === 'ranks';
   const columnRanks = Object.fromEntries(shown.map((m) => [m.id, rankOn(rows, m.id, setup.order)]));
+  // Clicking a header sorts on it; clicking the sorted header flips the direction.
+  function sortOn(id) {
+    const flip = setup.order === 'desc' ? 'asc' : 'desc';
+    onChange({ ...setup, sort: id, order: id === setup.sort ? flip : setup.order });
+  }
+
   function cellValue(row, m) {
     const value = row.values[m.id];
     return ranks && typeof value === 'number' ? columnRanks[m.id][row.ticker] : value;
@@ -34,10 +42,13 @@ export function ScreenerTable({ metrics, setup, rows, filter }) {
               <th scope="col">Rank</th>
               <th scope="col">Ticker</th>
               {shown.map((m) => (
-                <th scope="col" key={m.id}>
-                  {m.name}
-                  <br />
-                  <small>{ranks ? `rank, 1 = ${setup.order === 'desc' ? 'highest' : 'lowest'}` : m.unit}</small>
+                <th scope="col" key={m.id} aria-sort={m.id === setup.sort ? sortWord[setup.order] : undefined}>
+                  <button className="sort-header" type="button" onClick={() => sortOn(m.id)}>
+                    {m.name}
+                    {m.id === setup.sort && (setup.order === 'desc' ? ' ▼' : ' ▲')}
+                    <br />
+                    <small>{ranks ? `rank, 1 = ${setup.order === 'desc' ? 'highest' : 'lowest'}` : m.unit}</small>
+                  </button>
                 </th>
               ))}
             </tr>

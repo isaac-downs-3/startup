@@ -98,6 +98,23 @@ main#screener > * {
   color: var(--muted);
 }
 
+/* Metric headers are buttons that sort on that column. They look like plain
+   header text, right-aligned over the figures, and highlight on hover. */
+.results-table .sort-header {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+.results-table .sort-header:hover,
+.results-table .sort-header:focus-visible,
+.results-table th[aria-sort] .sort-header {
+  color: var(--accent);
+}
+
 /* The ticker column stays put when the table scrolls sideways. */
 .results-table th[scope='row'],
 .results-table thead th:nth-child(2) {
