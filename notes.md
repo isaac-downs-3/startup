@@ -164,3 +164,33 @@ Conditional rendering with `{cond && <Component />}`: Login shows Authenticated 
 The WebSocket is mocked with `setInterval` in `gameNotifier.js`, which broadcasts a fake score every 5 seconds.
 
 A child's methods can be called through a ref: SimonGame calls `btn.ref.current.press()` on each SimonButton.
+
+## Startup React P2: Reactivity
+
+What I learned making the startup reactive:
+
+Hard-coded data behind async functions (`getMetrics()`, `getScreener()`) makes the service swap easy later: the views already load in `useEffect` and `.then(setState)`, so only the function bodies change when they become `fetch` calls.
+
+An uncontrolled `<select defaultValue>` only applies its default on the first render. If the options arrive later from an effect, the default is lost. Controlled inputs (`value` + `onChange`) don't have this problem.
+
+Data that arrives in an effect is empty on the first render. Code like `columns.map((id) => metrics.find(...).name)` crashes then, so derive from the loaded array (`metrics.filter(...)`) or guard until it has loaded.
+
+Store numbers, format at render. Strings like `'55.8%'` can't be sorted or ranked, so the sample data holds `0.558` and a `formatValue(value, unit)` helper turns it into text.
+
+Keeping related settings in one state object (the screener setup: columns, sort, order, view) makes it easy to save, restore, and save under a name. Update it with a copy: `onChange({ ...setup, sort: id })`.
+
+`useState(() => readSetup(userName))` takes a function so localStorage is only read on the first render, not every render.
+
+A `useEffect` on `[userName, setup]` saves the setup to localStorage every time it changes, so the screener reopens the way it was left.
+
+`setInterval` in a `useEffect` must return `() => clearInterval(timer)`, or a new feed starts every time the screener opens. Adding `paused` to the dependency list stops and restarts it.
+
+The interval callback only sees the state from the render that started it. A `useRef` that is updated every render (`rowsRef.current = rows`) lets it read the latest rows without restarting the feed. Setters that take a function (`setRows((current) => ...)`) also always see the latest value.
+
+To replay a CSS animation on an element that already exists, change its `key` so React mounts a fresh one.
+
+`useNavigate` also works for moving between views after an action, not just after a login form: adding a metric to the screener, or opening a saved setup.
+
+A form's `onSubmit` with `event.preventDefault()` makes Enter work in a text box without reloading the page.
+
+Things that will be real later and are mocked now: accounts and the watchlist live in localStorage under per-user keys, Finnhub data is the 2025-06-30 sample, and the WebSocket is a `setInterval` price feed.
