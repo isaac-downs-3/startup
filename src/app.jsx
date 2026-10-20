@@ -77,7 +77,7 @@ export default function App() {
           {/* The screener and watchlist hold a user's data, so signed-out visitors go
               to the login page. Metric definitions are public. */}
           <Route path="/screener" element={userName ? <Screener userName={userName} /> : <Navigate to="/" replace />} />
-          <Route path="/metrics" element={<Metrics />} />
+          <Route path="/metrics" element={<Metrics userName={userName} />} />
           <Route path="/watchlist" element={userName ? <Watchlist userName={userName} /> : <Navigate to="/" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />

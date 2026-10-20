@@ -1,12 +1,14 @@
 import React from 'react';
 import './metrics.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { MetricsTable } from './metricsTable';
 import { getMetrics } from '../service';
+import { readSetup, saveSetup } from '../screener/setupStore';
 
 const kinds = ['all', 'metric', 'flow', 'stock', 'rate', 'label'];
 
-export function Metrics() {
+export function Metrics({ userName }) {
+  const navigate = useNavigate();
   const [metrics, setMetrics] = React.useState([]);
   const [query, setQuery] = React.useState('');
   const [kind, setKind] = React.useState('all');
@@ -23,6 +25,14 @@ export function Metrics() {
       (kind === 'all' || m.kind === kind) &&
       [m.name, m.id, m.formula ?? '', ...(m.reads ?? [])].some((t) => t.toLowerCase().includes(text))
   );
+
+  // A signed-in user can add any computed metric to their screener's columns.
+  const inScreener = userName ? readSetup(userName).columns : [];
+  function addToScreener(id) {
+    const setup = readSetup(userName);
+    saveSetup(userName, { ...setup, columns: [...setup.columns, id] });
+    navigate('/screener');
+  }
 
   return (
     <main id="metrics">
@@ -81,7 +91,12 @@ export function Metrics() {
         </fieldset>
       </form>
 
-      <MetricsTable metrics={shown} total={metrics.length} />
+      <MetricsTable
+        metrics={shown}
+        total={metrics.length}
+        inScreener={inScreener}
+        onAdd={userName ? addToScreener : null}
+      />
     </main>
   );
 }

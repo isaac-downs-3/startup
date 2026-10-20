@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function MetricsTable({ metrics, total }) {
+export function MetricsTable({ metrics, total, inScreener, onAdd }) {
   const computed = metrics.filter((m) => m.kind === 'metric').length;
   const raw = metrics.length - computed;
 
@@ -23,7 +23,7 @@ export function MetricsTable({ metrics, total }) {
         </thead>
         <tbody>
           {metrics.map((metric) => (
-            <MetricRow key={metric.id} metric={metric} />
+            <MetricRow key={metric.id} metric={metric} inScreener={inScreener.includes(metric.id)} onAdd={onAdd} />
           ))}
           {metrics.length === 0 && total > 0 && (
             <tr>
@@ -36,7 +36,7 @@ export function MetricsTable({ metrics, total }) {
   );
 }
 
-function MetricRow({ metric }) {
+function MetricRow({ metric, inScreener, onAdd }) {
   const percent = `${Math.round(metric.coverage * 100)}%`;
 
   return (
@@ -55,7 +55,22 @@ function MetricRow({ metric }) {
         </meter>{' '}
         {percent}
       </td>
-      <td>{metric.formula ? <Formula metric={metric} /> : 'Raw field from Finnhub'}</td>
+      <td>
+        {metric.formula ? <Formula metric={metric} /> : 'Raw field from Finnhub'}
+        {onAdd &&
+          metric.kind === 'metric' &&
+          (inScreener ? (
+            <span className="screener-column">In your screener</span>
+          ) : (
+            <button
+              className="btn btn-sm btn-outline-secondary screener-column"
+              type="button"
+              onClick={() => onAdd(metric.id)}
+            >
+              Add to screener
+            </button>
+          ))}
+      </td>
     </tr>
   );
 }
