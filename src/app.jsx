@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Login } from './login/login';
 import { Screener } from './screener/screener';
 import { Metrics } from './metrics/metrics';
@@ -44,21 +44,25 @@ export default function App() {
                   Home
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/screener">
-                  Screener
-                </NavLink>
-              </li>
+              {userName && (
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/screener">
+                    Screener
+                  </NavLink>
+                </li>
+              )}
               <li className="nav-item">
                 <NavLink className="nav-link" to="/metrics">
                   Metrics
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/watchlist">
-                  Watchlist
-                </NavLink>
-              </li>
+              {userName && (
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/watchlist">
+                    Watchlist
+                  </NavLink>
+                </li>
+              )}
               <li className="nav-item">
                 <NavLink className="nav-link" to="/about">
                   About
@@ -70,9 +74,11 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={<Login signedInAs={userName} onLogin={logIn} onLogout={logOut} />} />
-          <Route path="/screener" element={<Screener />} />
+          {/* The screener and watchlist hold a user's data, so signed-out visitors go
+              to the login page. Metric definitions are public. */}
+          <Route path="/screener" element={userName ? <Screener /> : <Navigate to="/" replace />} />
           <Route path="/metrics" element={<Metrics />} />
-          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/watchlist" element={userName ? <Watchlist /> : <Navigate to="/" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
