@@ -6,9 +6,8 @@ import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
 import { getMetrics, getScreener } from '../service';
-import { liveUpdates } from './screenerData';
 import { readSetup, saveSetup } from './setupStore';
-import { repriceRow, startPriceFeed } from './priceFeed';
+import { describeMove, repriceRow, startPriceFeed } from './priceFeed';
 
 // The screener loads its data once and passes it down to the parts that show it.
 export function Screener({ userName }) {
@@ -16,6 +15,12 @@ export function Screener({ userName }) {
   const [rows, setRows] = React.useState([]);
   const [setup, setSetup] = React.useState(() => readSetup(userName));
   const [filter, setFilter] = React.useState('');
+  const [updates, setUpdates] = React.useState([]);
+
+  // The feed's callback reads the latest rows through a ref, so a new price
+  // doesn't restart the feed.
+  const rowsRef = React.useRef(rows);
+  rowsRef.current = rows;
 
   React.useEffect(() => {
     getMetrics().then(setMetrics);
@@ -34,9 +39,11 @@ export function Screener({ userName }) {
     if (!loaded) return;
     const prices = Object.fromEntries(rows.map((row) => [row.ticker, row.price]));
     return startPriceFeed(prices, (quote) => {
-      setRows((current) =>
-        current.map((row) => (row.ticker === quote.ticker ? repriceRow(row, quote.price) : row))
-      );
+      const before = rowsRef.current.find((row) => row.ticker === quote.ticker);
+      const after = repriceRow(before, quote.price);
+      setRows((current) => current.map((row) => (row.ticker === after.ticker ? after : row)));
+      // The newest move goes on top; keep the last ten.
+      setUpdates((current) => [describeMove(before, after, quote.time), ...current].slice(0, 10));
     });
   }, [loaded]);
 
@@ -58,7 +65,7 @@ export function Screener({ userName }) {
       <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
       <DataSource />
       <ScreenerTable metrics={metrics} setup={setup} onChange={setSetup} rows={rows} filter={filter} />
-      <LiveUpdates updates={liveUpdates} />
+      <LiveUpdates updates={updates} />
     </main>
   );
 }

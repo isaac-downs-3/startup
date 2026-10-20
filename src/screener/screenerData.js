@@ -235,11 +235,3 @@ export const rows = [
     },
   },
 ];
-
-// WebSocket placeholder: later these are pushed from the server as prices move.
-export const liveUpdates = [
-  { time: '10:42:07', kind: 'up', text: 'NVDA price $123.54 → $124.71: Price / earnings 42.1× → 42.4×' },
-  { time: '10:41:52', kind: 'down', text: 'TSLA price $349.62 → $346.10: Price / earnings 210.6× → 208.5×' },
-  { time: '10:41:30', kind: 'up', text: 'AMZN price $215.11 → $216.02: Price / earnings 38.9× → 39.1×' },
-  { time: '10:40:58', kind: 'news', text: 'AMD reported: Net margin percentile now available' },
-];

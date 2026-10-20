@@ -1,3 +1,5 @@
+import { formatValue } from './format';
+
 // Simulated price feed, standing in for the WebSocket until that deliverable.
 // Every few seconds one company's price moves by up to 1.5% either way, and
 // onQuote gets the new price. Returns a function that stops the feed.
@@ -6,10 +8,9 @@ export function startPriceFeed(prices, onQuote, everyMs = 2500) {
   const timer = setInterval(() => {
     const tickers = Object.keys(latest);
     const ticker = tickers[Math.floor(Math.random() * tickers.length)];
-    const from = latest[ticker];
-    const price = Math.round(from * (1 + (Math.random() - 0.5) * 0.03) * 100) / 100;
+    const price = Math.round(latest[ticker] * (1 + (Math.random() - 0.5) * 0.03) * 100) / 100;
     latest[ticker] = price;
-    onQuote({ ticker, from, price, time: new Date() });
+    onQuote({ ticker, price, time: new Date() });
   }, everyMs);
   return () => clearInterval(timer);
 }
@@ -33,4 +34,19 @@ export function repriceRow(row, price) {
     if (typeof values[id] === 'number') values[id] = move(values[id], ratio);
   }
   return { ...row, price, values };
+}
+
+// One line for the Live updates list: the price move and what it did to P/E.
+let nextId = 0;
+export function describeMove(before, after, time) {
+  const change = after.price / before.price - 1;
+  const price = (row) => formatValue(row.price, 'currency per share');
+  const pe = (row) => formatValue(row.values.pe, 'multiple');
+  const peText = typeof before.values.pe === 'number' ? `: Price / earnings ${pe(before)} → ${pe(after)}` : '';
+  return {
+    id: nextId++,
+    time: time.toLocaleTimeString('en-US', { hour12: false }),
+    kind: change < 0 ? 'down' : 'up',
+    text: `${after.ticker} price ${price(before)} → ${price(after)} (${change < 0 ? '' : '+'}${(change * 100).toFixed(1)}%)${peText}`,
+  };
 }
