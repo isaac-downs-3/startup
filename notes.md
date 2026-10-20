@@ -121,14 +121,46 @@ props, state, and render are key aspects of React that allow it to change progra
 
 What I learned converting the HTML/CSS startup to React with Vite:
 
-- Vite wants `index.html` at the project root with a `<div id="root">` and a `<script type="module" src="/index.jsx">`. `index.jsx` mounts `<App />` into `#root`.
-- Files in `public/` are served as-is at `/` (`/logo.svg`). Small images that are `import`ed get inlined as data URIs instead, which can break selectors like `img[src$='.svg']`.
-- Vite's dev server serves `about.html` for `/about` if that file still exists, so the old HTML page shadows the React route. Delete each old page once it's ported.
-- JSX differences from HTML: `class` → `className`, `for` → `htmlFor`, every tag must close (`<input />`, `<br />`), comments are `{/* */}`, and uncontrolled inputs use `defaultChecked` / `defaultValue`.
-- JSX drops whitespace at a line break between text and a tag, so `on it.` followed by `<b>Kind</b>` on the next line renders as `on it.Kind`. Use `{' '}`.
-- React renders inside `#root`, not `body`, so layout rules on `body` (my flex page frame) have to move to a wrapper element.
-- With one `body` for every view, page-scoped CSS like `#screener main` stops working. I put the id on each view's `<main>` and changed the selectors to `main#screener`.
-- `NavLink` adds the `active` class and `aria-current="page"` to the link for the current route, so the existing nav pill styles kept working.
-- A `<Routes>` block can go anywhere, not just around the page body. I used one in the header to hide "Signed in as" on the login route.
-- Rendering repeated rows from an array with `.map()` needs a unique `key` on each element.
-- Deploying: `deployReact.sh` runs `npm run build` and copies only `dist/` to the server.
+Vite wants `index.html` at the project root with a `<div id="root">` and a `<script type="module" src="/index.jsx">`. `index.jsx` mounts `<App />` into `#root`.
+
+Files in `public/` are served as-is at `/` (`/logo.svg`). Small images that are `import`ed get inlined as data URIs instead, which can break selectors like `img[src$='.svg']`.
+
+Vite's dev server serves `about.html` for `/about` if that file still exists, so the old HTML page shadows the React route. Delete each old page once it's ported.
+
+JSX differences from HTML: `class` → `className`, `for` → `htmlFor`, every tag must close (`<input />`, `<br />`), comments are `{/* */}`, and uncontrolled inputs use `defaultChecked` / `defaultValue`.
+
+JSX drops whitespace at a line break between text and a tag, so `on it.` followed by `<b>Kind</b>` on the next line renders as `on it.Kind`. Use `{' '}`.
+
+React renders inside `#root`, not `body`, so layout rules on `body` (my flex page frame) have to move to a wrapper element.
+
+With one `body` for every view, page-scoped CSS like `#screener main` stops working. I put the id on each view's `<main>` and changed the selectors to `main#screener`.
+
+`NavLink` adds the `active` class and `aria-current="page"` to the link for the current route, so the existing nav pill styles kept working.
+
+A `<Routes>` block can go anywhere, not just around the page body. I used one in the header to hide "Signed in as" on the login route.
+
+Rendering repeated rows from an array with `.map()` needs a unique `key` on each element.
+
+Deploying: `deployReact.sh` runs `npm run build` and copies only `dist/` to the server.
+
+## Simon React P2: Reactivity
+
+What I learned from studying the reactive Simon (`simon-react`):
+
+`useState` returns `[value, setValue]`. Calling the setter re-renders the component; assigning to a plain variable does not.
+
+Setters are asynchronous, so code that depends on the new value goes in a `useEffect` that lists that value as a dependency. Simon plays the sequence in an effect on `[sequence]` instead of right after `setSequence`.
+
+`useEffect(fn, [])` runs once after the first render. About uses this to set its image and quote, standing in for the fetch calls that come with the service.
+
+Returning a function from `useEffect` gives cleanup on unmount. Players adds a handler to `GameNotifier` and removes it in the cleanup so handlers don't pile up on each visit to Play.
+
+State that several views need (`userName`, `authState`) lives in `App` and is passed down as props, with a callback (`onAuthChange`) so children can change it. That is "lifting state up".
+
+Conditional rendering with `{cond && <Component />}`: Login shows Authenticated or Unauthenticated based on `authState`, and the nav only shows Play and Scores when logged in.
+
+`localStorage` holds the mock data for now: `userName` marks the user as logged in on the next visit, and `scores` is a JSON array that Play writes and Scores reads.
+
+The WebSocket is mocked with `setInterval` in `gameNotifier.js`, which broadcasts a fake score every 5 seconds.
+
+A child's methods can be called through a ref: SimonGame calls `btn.ref.current.press()` on each SimonButton.
