@@ -102,7 +102,6 @@ Hooks are special functions that allow functional components to access the React
 
 JSON = JavaScript Object Notation
 Dates expressed through strings with standardized notation.
-
 ## React
 
 React is component-based, so you can construct web programs more like building blocks instead of unitary scripts. 
@@ -116,8 +115,7 @@ Router defines the routes a user can take through the application.
 
 props, state, and render are key aspects of React that allow it to change programs in response to user input.
 
-
-## Startup React P1: Routing
+    ## Startup React P1: Routing
 
 What I learned converting the HTML/CSS startup to React with Vite:
 
@@ -194,3 +192,18 @@ To replay a CSS animation on an element that already exists, change its `key` so
 A form's `onSubmit` with `event.preventDefault()` makes Enter work in a text box without reloading the page.
 
 Things that will be real later and are mocked now: accounts and the watchlist live in localStorage under per-user keys, Finnhub data is the 2025-06-30 sample, and the WebSocket is a `setInterval` price feed.
+
+
+## Startup Service
+
+Use 'Promise' to to unblock main thread and execute blocking tasks later.
+'then', 'catch', and 'finally' deal with the synchronous results.
+'async'/'await' syntax allows you to avoid chaining commands. 
+
+JavaScript strings are immutable.
+Variables declared using either 'let' or 'const' keywords. 
+JavaScript is dynamically typed.
+'rest' helps handle functions with unknown number of functions - a single parameter hoding all the others.
+'spread' separates iterable into parameters. 
+
+
