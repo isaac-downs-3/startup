@@ -2,6 +2,8 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+const { metrics } = require('./metricsData');
+const { rows } = require('./screenerData');
 const { tickers, setups } = require('./watchlistData');
 
 const app = express();
@@ -102,6 +104,33 @@ apiRouter.get('/auth/me', verifyAuth, (req, res) => {
   res.send(publicUser(req.user));
 });
 
+// Every metric and raw field definition. These are public.
+apiRouter.get('/metrics', (_req, res) => {
+  res.send(metrics);
+});
+
+// One row per company on the user's watchlist, with every metric's value. The
+// frontend sorts and ranks them, because the price feed re-ranks them in the browser.
+apiRouter.get('/screener', verifyAuth, (req, res) => {
+  res.send(req.user.watchlist.tickers.map(({ ticker }) => rowFor(ticker)));
+});
+
+// The user's saved tickers and screener setups.
+apiRouter.get('/watchlist', verifyAuth, (req, res) => {
+  res.send(req.user.watchlist);
+});
+
+// Replace the user's saved tickers and screener setups.
+apiRouter.put('/watchlist', verifyAuth, (req, res) => {
+  const watchlist = readWatchlist(req.body);
+  if (!watchlist) {
+    res.status(400).send({ msg: 'That is not a valid watchlist' });
+    return;
+  }
+  req.user.watchlist = watchlist;
+  res.send(watchlist);
+});
+
 // An unknown API path is an error, not a page of the app.
 apiRouter.use((_req, res) => {
   res.status(404).send({ msg: 'Not found' });
@@ -137,6 +166,55 @@ async function createUser({ userName, password }) {
   };
   users.push(user);
   return user;
+}
+
+// A ticker the sample data doesn't cover gets a row of dashes that say why.
+function rowFor(ticker) {
+  const row = rows.find((row) => row.ticker === ticker);
+  if (row) return row;
+  const missing = { missing: 'No sample data for this ticker until Finnhub is connected' };
+  const values = Object.fromEntries(Object.keys(rows[0].values).map((id) => [id, missing]));
+  return { ticker, price: null, values };
+}
+
+// A clean copy of a submitted watchlist with only the expected fields, or null if
+// any part of it is invalid.
+function readWatchlist(body) {
+  const { tickers, setups } = body ?? {};
+  if (!Array.isArray(tickers) || tickers.length > 100) return null;
+  if (!Array.isArray(setups) || setups.length > 50) return null;
+  if (!tickers.every(isSavedTicker) || !setups.every(isSavedSetup)) return null;
+  if (new Set(tickers.map((t) => t.ticker)).size !== tickers.length) return null;
+  return {
+    tickers: tickers.map(({ ticker, added }) => ({ ticker, added })),
+    setups: setups.map(({ name, setup, lastUsed }) => ({
+      name,
+      setup: { columns: setup.columns, sort: setup.sort, order: setup.order, view: setup.view },
+      lastUsed,
+    })),
+  };
+}
+
+function isShortText(value) {
+  return typeof value === 'string' && value.length > 0 && value.length <= 100;
+}
+
+function isSavedTicker(entry) {
+  return typeof entry?.ticker === 'string' && /^[A-Z][A-Z.]{0,5}$/.test(entry.ticker) && isShortText(entry.added);
+}
+
+function isSavedSetup(entry) {
+  const setup = entry?.setup;
+  return (
+    isShortText(entry?.name) &&
+    isShortText(entry?.lastUsed) &&
+    Array.isArray(setup?.columns) &&
+    setup.columns.length <= 100 &&
+    setup.columns.every(isShortText) &&
+    isShortText(setup.sort) &&
+    ['asc', 'desc'].includes(setup.order) &&
+    ['values', 'ranks'].includes(setup.view)
+  );
 }
 
 // Each user gets their own copy, so one user's changes never reach another's.
