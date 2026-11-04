@@ -15,6 +15,9 @@ const authCookieName = 'token';
 const accountLifetimeMs = 1000 * 60 * 60 * 24 * 365;
 const guestLifetimeMs = 1000 * 60 * 60 * 24;
 
+// What a guest is shown as. It isn't a valid email, so no account can have it.
+const guestName = 'Guest';
+
 // Users and their watchlists live in memory, so a restart loses them until the
 // database deliverable.
 let users = [];
@@ -32,11 +35,9 @@ app.use('/api', apiRouter);
 apiRouter.post('/auth/register', async (req, res) => {
   const credentials = readCredentials(req.body);
   if (!credentials) {
-    res.status(400).send({ msg: 'A username and password are required' });
-  } else if (credentials.userName.toLowerCase() === 'guest') {
-    res.status(409).send({ msg: 'Guest is reserved. Pick another name.' });
-  } else if (findAccount(credentials.userName)) {
-    res.status(409).send({ msg: `${credentials.userName} already has an account. Log in instead.` });
+    res.status(400).send({ msg: 'A valid email and a password are required' });
+  } else if (findAccount(credentials.email)) {
+    res.status(409).send({ msg: `${credentials.email} already has an account. Log in instead.` });
   } else {
     const user = await createUser(credentials);
     setAuthCookie(res, user.token);
@@ -48,16 +49,16 @@ apiRouter.post('/auth/register', async (req, res) => {
 apiRouter.post('/auth/login', async (req, res) => {
   const credentials = readCredentials(req.body);
   if (!credentials) {
-    res.status(400).send({ msg: 'A username and password are required' });
+    res.status(400).send({ msg: 'A valid email and a password are required' });
     return;
   }
-  const user = findAccount(credentials.userName);
+  const user = findAccount(credentials.email);
   if (user && (await bcrypt.compare(credentials.password, user.passwordHash))) {
     user.token = uuid.v4();
     setAuthCookie(res, user.token);
     res.send(publicUser(user));
   } else {
-    res.status(401).send({ msg: 'Wrong username or password' });
+    res.status(401).send({ msg: 'Wrong email or password' });
   }
 });
 
@@ -65,7 +66,7 @@ apiRouter.post('/auth/login', async (req, res) => {
 apiRouter.post('/auth/guest', (_req, res) => {
   users = users.filter((user) => !isExpiredGuest(user));
   const user = {
-    userName: 'Guest',
+    email: guestName,
     token: uuid.v4(),
     watchlist: sampleWatchlist(),
     guestUntil: Date.now() + guestLifetimeMs,
@@ -149,17 +150,19 @@ app.use((err, _req, res, _next) => {
   res.status(status).send({ msg: status >= 500 ? 'Something went wrong' : 'Bad request' });
 });
 
-// The trimmed username and the password, or null if either is missing.
+// The email, trimmed and lowercased so one address can't hold two accounts, and
+// the password. Null if the email isn't valid or the password is missing.
 function readCredentials(body) {
-  const userName = typeof body?.userName === 'string' ? body.userName.trim() : '';
+  const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
   const password = body?.password;
-  if (!userName || typeof password !== 'string' || !password) return null;
-  return { userName, password };
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+  if (typeof password !== 'string' || !password) return null;
+  return { email, password };
 }
 
-async function createUser({ userName, password }) {
+async function createUser({ email, password }) {
   const user = {
-    userName,
+    email,
     passwordHash: await bcrypt.hash(password, 10),
     token: uuid.v4(),
     watchlist: sampleWatchlist(),
@@ -222,9 +225,9 @@ function sampleWatchlist() {
   return structuredClone({ tickers, setups });
 }
 
-// Guests have no password, so they can never be logged in to by name.
-function findAccount(userName) {
-  return users.find((user) => user.userName === userName && user.passwordHash);
+// Guests have no password, so they can never be logged in to.
+function findAccount(email) {
+  return users.find((user) => user.email === email && user.passwordHash);
 }
 
 function findByToken(token) {
@@ -238,7 +241,7 @@ function isExpiredGuest(user) {
 
 // What the frontend may see of a user. Never the hash or the token.
 function publicUser(user) {
-  return { userName: user.userName };
+  return { email: user.email };
 }
 
 // Secure unless explicitly running in development. The server sets no NODE_ENV.
