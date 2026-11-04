@@ -36,6 +36,27 @@ main#about img[src$='.svg'] {
   font-weight: 500;
 }
 
+#about .quote figure {
+  margin: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--accent);
+}
+
+#about .quote blockquote {
+  margin-bottom: 0.3rem;
+  font-style: italic;
+}
+
+#about .quote figcaption::before {
+  content: '— ';
+}
+
+#about .quote-source {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+
 /* The disclaimer uses Bootstrap's warning alert, tuned to the palette. */
 #about .alert-warning {
   --bs-alert-bg: rgb(251 191 36 / 8%);

@@ -47,6 +47,8 @@ export function About() {
         </ol>
       </section>
 
+      <Quote />
+
       <section className="alert alert-warning">
         <h3>Important information</h3>
         <p>
@@ -56,5 +58,39 @@ export function About() {
         </p>
       </section>
     </main>
+  );
+}
+
+// A random quote from a third-party service, called directly from the browser. It
+// needs no key and allows requests from any site. The page reads fine without it, so
+// if the call fails a short note takes its place.
+function Quote() {
+  const [quote, setQuote] = React.useState(null);
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch('https://quote.cs260.click')
+      .then((response) => {
+        if (!response.ok) throw new Error(`Quote service returned ${response.status}`);
+        return response.json();
+      })
+      .then(setQuote)
+      .catch(() => setFailed(true));
+  }, []);
+
+  return (
+    <section className="quote">
+      <h3>A thought for the desk</h3>
+      {quote && (
+        <figure>
+          <blockquote>{quote.quote}</blockquote>
+          <figcaption>{quote.author}</figcaption>
+        </figure>
+      )}
+      {!quote && <p>{failed ? 'The quote service is unavailable right now.' : 'Loading a quote...'}</p>}
+      <p className="quote-source">
+        From the third-party <a href="https://quote.cs260.click">quote.cs260.click</a> service.
+      </p>
+    </section>
   );
 }
