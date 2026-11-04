@@ -10,6 +10,8 @@ const app = express();
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 const authCookieName = 'token';
+const accountLifetimeMs = 1000 * 60 * 60 * 24 * 365;
+const guestLifetimeMs = 1000 * 60 * 60 * 24;
 
 // Users and their watchlists live in memory, so a restart loses them until the
 // database deliverable.
@@ -57,10 +59,27 @@ apiRouter.post('/auth/login', async (req, res) => {
   }
 });
 
-// Log out, ending the session on the server as well as clearing the cookie.
+// Start a temporary session with no account. Every guest gets their own watchlist.
+apiRouter.post('/auth/guest', (_req, res) => {
+  users = users.filter((user) => !isExpiredGuest(user));
+  const user = {
+    userName: 'Guest',
+    token: uuid.v4(),
+    watchlist: sampleWatchlist(),
+    guestUntil: Date.now() + guestLifetimeMs,
+  };
+  users.push(user);
+  setAuthCookie(res, user.token, guestLifetimeMs);
+  res.send(publicUser(user));
+});
+
+// Log out, ending the session on the server as well as clearing the cookie. A
+// guest has no account to come back to, so their data goes too.
 apiRouter.delete('/auth/logout', (req, res) => {
   const user = findByToken(req.cookies[authCookieName]);
-  if (user) {
+  if (user?.guestUntil) {
+    users = users.filter((other) => other !== user);
+  } else if (user) {
     delete user.token;
   }
   res.clearCookie(authCookieName);
@@ -131,7 +150,12 @@ function findAccount(userName) {
 }
 
 function findByToken(token) {
-  return token ? users.find((user) => user.token === token) : undefined;
+  const user = token ? users.find((user) => user.token === token) : undefined;
+  return user && !isExpiredGuest(user) ? user : undefined;
+}
+
+function isExpiredGuest(user) {
+  return user.guestUntil !== undefined && user.guestUntil <= Date.now();
 }
 
 // What the frontend may see of a user. Never the hash or the token.
@@ -140,9 +164,9 @@ function publicUser(user) {
 }
 
 // Secure unless explicitly running in development. The server sets no NODE_ENV.
-function setAuthCookie(res, token) {
+function setAuthCookie(res, token, maxAge = accountLifetimeMs) {
   res.cookie(authCookieName, token, {
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    maxAge,
     secure: process.env.NODE_ENV !== 'development',
     httpOnly: true,
     sameSite: 'strict',
