@@ -56,9 +56,10 @@ export function Watchlist({ userName }) {
     <main id="watchlist">
       <h2>Watchlist</h2>
       <p>
-        The companies your screener runs on. Your watchlist is saved to your account in the database, so
-        it follows you between sessions and devices. The sample data covers the 12 starting tickers; any
-        other ticker shows dashes in the screener until Finnhub is connected.
+        The companies your screener runs on. Your watchlist is saved to your account on the server, so it
+        follows you between sessions and devices. For now the server keeps it in memory, so a restart
+        clears it until the database is added. The sample data covers the 12 starting tickers; any other
+        ticker shows dashes in the screener until Finnhub is connected.
       </p>
 
       {error && (
