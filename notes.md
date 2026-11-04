@@ -247,3 +247,25 @@ In development two servers run: Vite on 5173 and Node on 3000. `vite.config.js` 
 `deployService.sh` is different from `deployReact.sh`. It builds the frontend into `public`, copies the service's `.js` and `.json` files, runs `npm install` on the server, and does `pm2 restart`. Simon listens on port 3000 and Startup on 4000.
 
 Caddy has to `reverse_proxy` the subdomain to the Node port. If its block is still `file_server`, the frontend loads from `public` but `/api` calls never reach Node.
+
+## Building my startup's service
+
+`deployService.sh` only copies `service/*.js` and `service/*.json`, and it deletes `services/startup` on the server first. Backend code in a subfolder, or a `.env`, never makes it to production. So the backend files all sit directly in `service/`, and backend packages go in `service/package.json`, not the root one.
+
+The cookie's `secure` flag needs care. PM2 on my server has no `NODE_ENV` set, so checking for `production` would silently turn `secure` off in production. `secure: process.env.NODE_ENV !== 'development'` is secure by default, and `npm run dev` in `service/` sets `development` for local runs.
+
+The latest `uuid` is ESM-only, and my service uses `require`, so I stayed on v11 like Simon.
+
+Check `typeof` on everything in a request body. A password sent as a number makes `bcrypt` throw, which becomes a 500 instead of a 400. Rebuilding the watchlist from just the expected fields also means extra fields never get stored.
+
+`structuredClone` the sample watchlist for each new user. Otherwise every user shares the same arrays and one user's edit shows up for everyone.
+
+Lowercase emails before storing or comparing them, or `A@x.com` and `a@x.com` become two accounts. Use the same "Wrong email or password" message for both failures, so the login form doesn't reveal which emails have accounts.
+
+Users are in memory, so restarting the service ends every session while the browser still has its cookie and its saved name. The frontend has to handle that: `service.js` treats any 401 as signed out, and `App` checks `/api/auth/me` on load.
+
+`fetch` only rejects when the network fails. A 401 or 500 still resolves, so check `response.ok` or `response.status`. When my service is down, the proxy in front of it answers with a 502 rather than a network failure, and that response isn't JSON, so reading it needs a fallback.
+
+An `HttpOnly` cookie can't be read by JavaScript, which is the point. `document.cookie` doesn't show it, and the browser sends it by itself on same-origin `fetch` calls.
+
+Calling a third party from the browser needs an API that allows CORS and doesn't need a key, because anything in the frontend bundle is public. `quote.cs260.click` works. Finnhub allows CORS but needs a key, so it has to go through the backend later, with the key kept outside the deploy folder.
