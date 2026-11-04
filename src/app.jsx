@@ -7,10 +7,12 @@ import { Screener } from './screener/screener';
 import { Metrics } from './metrics/metrics';
 import { Watchlist } from './watchlist/watchlist';
 import { About } from './about/about';
+import { getCurrentUser, logoutUser, setSignedOutHandler } from './service';
 
 export default function App() {
-  // Mocked authentication: the signed-in name is kept in localStorage until the
-  // service deliverable replaces it with a login endpoint and an auth cookie.
+  // The name to show: the user's email, or Guest. The auth cookie is what signs the
+  // user in. This copy in localStorage only keeps a reload from flashing the login
+  // page, and the service is asked on load whether the session is still valid.
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') ?? '');
 
   function logIn(name) {
@@ -18,9 +20,26 @@ export default function App() {
     setUserName(name);
   }
 
-  function logOut() {
+  function clearUser() {
     localStorage.removeItem('userName');
     setUserName('');
+  }
+
+  // If the service can't be reached the session may still be good, so stay signed in.
+  React.useEffect(() => {
+    setSignedOutHandler(clearUser);
+    if (userName) {
+      getCurrentUser()
+        .then((user) => logIn(user.email))
+        .catch(() => {});
+    }
+  }, []);
+
+  // Sign out here even if the service can't be reached.
+  function logOut() {
+    logoutUser()
+      .catch(() => {})
+      .finally(clearUser);
   }
 
   return (

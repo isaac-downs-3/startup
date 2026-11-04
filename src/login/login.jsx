@@ -1,46 +1,29 @@
 import React from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
-
-// A guest skips the form. Their watchlist and setups are kept under this name,
-// so no account can take it.
-const guestName = 'Guest';
+import { loginUser, registerUser, startGuestSession } from '../service';
 
 export function Login({ signedInAs, onLogin, onLogout }) {
   const navigate = useNavigate();
-  const [userName, setUserName] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
-  const name = userName.trim();
+  const canSubmit = email.trim() && password;
 
-  // Login is mocked for now. Accounts are a list of names in localStorage; the
-  // password is never checked or stored until the service deliverable.
+  // Run a sign-in call. On success go to the screener; otherwise show why it failed.
+  async function signIn(call) {
+    try {
+      const user = await call();
+      onLogin(user.email);
+      navigate('/screener');
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   function logIn(event) {
     event.preventDefault();
-    if (!readAccounts().includes(name)) {
-      setError(`There is no account for ${name}. Create one first.`);
-      return;
-    }
-    signIn(name);
-  }
-
-  function createAccount() {
-    const accounts = readAccounts();
-    if (name.toLowerCase() === guestName.toLowerCase()) {
-      setError(`${guestName} is reserved. Use Continue as guest below, or pick another name.`);
-      return;
-    }
-    if (accounts.includes(name)) {
-      setError(`${name} already has an account. Log in instead.`);
-      return;
-    }
-    localStorage.setItem('accounts', JSON.stringify([...accounts, name]));
-    signIn(name);
-  }
-
-  function signIn(as) {
-    onLogin(as);
-    navigate('/screener');
+    signIn(() => loginUser(email, password));
   }
 
   if (signedInAs) {
@@ -81,9 +64,9 @@ export function Login({ signedInAs, onLogin, onLogout }) {
               id="email"
               placeholder="your@email.com"
               required
-              value={userName}
+              value={email}
               onChange={(e) => {
-                setUserName(e.target.value);
+                setEmail(e.target.value);
                 setError('');
               }}
             />
@@ -99,7 +82,10 @@ export function Login({ signedInAs, onLogin, onLogout }) {
               placeholder="password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError('');
+              }}
             />
           </p>
           {error && (
@@ -108,27 +94,23 @@ export function Login({ signedInAs, onLogin, onLogout }) {
             </p>
           )}
           <div className="login-actions">
-            <button className="btn btn-primary" type="submit" disabled={!name || !password}>
+            <button className="btn btn-primary" type="submit" disabled={!canSubmit}>
               Log in
             </button>
             <button
               className="btn btn-outline-light"
               type="button"
-              disabled={!name || !password}
-              onClick={createAccount}
+              disabled={!canSubmit}
+              onClick={() => signIn(() => registerUser(email, password))}
             >
               Create account
             </button>
           </div>
-          <button className="btn btn-link guest" type="button" onClick={() => signIn(guestName)}>
+          <button className="btn btn-link guest" type="button" onClick={() => signIn(startGuestSession)}>
             Continue as guest
           </button>
         </fieldset>
       </form>
     </main>
   );
-}
-
-function readAccounts() {
-  return JSON.parse(localStorage.getItem('accounts') ?? '[]');
 }
