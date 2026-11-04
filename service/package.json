@@ -4,7 +4,8 @@
   "description": "Axon Trading House backend service",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "NODE_ENV=development node --watch index.js"
   },
   "author": "Isaac Downs",
   "license": "MIT",
