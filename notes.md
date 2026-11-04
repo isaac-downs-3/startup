@@ -206,4 +206,26 @@ JavaScript is dynamically typed.
 'rest' helps handle functions with unknown number of functions - a single parameter hoding all the others.
 'spread' separates iterable into parameters. 
 
+RPC exposes endpoints as function calls, usually all sent with POST, where the function name (like updateOrder) carries the action, which is simple but couples the API to the server's internal implementation. 
+REST treats everything as a resource identified by a URL path and acts on it with standard HTTP verbs (GET, POST, PUT, DELETE), which lets HTTP infrastructure like caching work well. 
+GraphQL uses a single query endpoint where the client specifies exactly what data it wants and how to join and filter it, cutting down on round trips and over-fetching but giving clients more power to make expensive requests and making authorization harder.
 
+MODULES: 
+JavaScript modules let you split code into files and share it, and there are two formats: Node’s older CommonJS modules, which use require() and module.exports, and the now-standard ES modules, which use import and export and are turned on in Node with "type": "module" in package.json. You can override that setting for a single file with the .cjs or .mjs extension. In the browser, ES modules load through <script type="module"> and can only be called from other modules unless you expose them globally, for example by attaching them to window or to an event listener, though web framework bundlers usually handle that wiring for you.
+
+EXPRESS: 
+Routing requests for server endpoints
+Manipulating HTTP requests with JSON body content
+Generating HTTP responses
+Using middleware to add functionality
+
+Troubleshooting 502:
+A 502 means Caddy can't reach your service, usually because it's missing files, crashing, or not starting, so first make sure the app runs in development and that Simon deploys. Then SSH into the production server, cd into the service directory, and use ls to check that all the files are there, that the main file is named index.js, that the structure is right (node_modules, public folder, package.json), and that index.js uses the right port (3000 for Simon, 4000 for Startup), then run pm2 restart <service>. If that doesn't fix it, run node index.js directly to see any error messages (like a missing module or bad file path), and if it runs fine, use pm2 describe <service> to check PM2's status, script path, and port. Fix the real problem in your development project and redeploy, since a fix made only on the server is temporary.
+
+SOP and CORS
+Same Origin Policy (SOP): Browsers only let JavaScript make requests to the same domain the user is viewing. This stops look-alike sites (like byu.iinstructure.com) from pulling content or login endpoints from the real site (byu.instructure.com).
+CORS: Cross Origin Resource Sharing relaxes SOP when a server sends an Access-Control-Allow-Origin header listing which origins may use its responses (* means any origin). The browser blocks the response if the origin doesn’t match or the header is missing. It’s only browser-side protection, though, since a hacker can proxy requests through their own server, so services still need their own safeguards.
+Third-party services: Before you use an outside API in your app, test that it returns * or your own domain in that header. If it doesn’t, the browser will block the request, as with i.picsum.photos, while icanhazdadjoke.com returns * and works.
+
+AUTHENTICATION TOKEN
+An authentication token lets the application remember that a user has already logged in, so they don't have to re-enter their email and password on every request. After the user authenticates, the token is stored on their device (often in a cookie) and sent back to the web service with each request. The service then uses it to identify the user, associate their data with them, and check what they're authorized to do.
