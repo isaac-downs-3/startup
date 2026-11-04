@@ -72,13 +72,13 @@ export function Login({ signedInAs, onLogin, onLogout }) {
         <fieldset className="card-body">
           <legend className="card-title">Log in or create an account</legend>
           <p>
-            <label className="form-label" htmlFor="username">
-              Username
+            <label className="form-label" htmlFor="email">
+              Email
             </label>
             <input
               className="form-control"
-              type="text"
-              id="username"
+              type="email"
+              id="email"
               placeholder="your@email.com"
               required
               value={userName}
