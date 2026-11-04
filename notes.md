@@ -229,3 +229,21 @@ Third-party services: Before you use an outside API in your app, test that it re
 
 AUTHENTICATION TOKEN
 An authentication token lets the application remember that a user has already logged in, so they don't have to re-enter their email and password on every request. After the user authenticates, the token is stored on their device (often in a cookie) and sent back to the web service with each request. The service then uses it to identify the user, associate their data with them, and check what they're authorized to do.
+
+## Simon Service
+
+All endpoints go on an Express router mounted at `/api`, so they can't collide with the frontend's paths. Everything else falls through to `express.static('public')`, and any unknown path gets `index.html` so React Router can handle it.
+
+Middleware order matters. `express.json()` and `cookieParser()` have to run before the routes that read `req.body` and `req.cookies`, and the "unknown path" handler goes last.
+
+Passing `verifyAuth` as the first handler on a route protects it: it calls `next()` if the cookie's token matches a user, and otherwise answers 401 before the endpoint runs.
+
+Passwords are stored as bcrypt hashes and checked with `bcrypt.compare`. The login token is a UUID in a cookie set with `secure`, `httpOnly`, and `sameSite: 'strict'`. Logging out deletes the token on the server as well as clearing the cookie.
+
+Users and scores are kept in memory for now, so restarting the service loses them until the database deliverable.
+
+In development two servers run: Vite on 5173 and Node on 3000. `vite.config.js` proxies `/api` to Node so the browser only talks to Vite. In production Node serves both the API and the bundled frontend from one port.
+
+`deployService.sh` is different from `deployReact.sh`. It builds the frontend into `public`, copies the service's `.js` and `.json` files, runs `npm install` on the server, and does `pm2 restart`. Simon listens on port 3000 and Startup on 4000.
+
+Caddy has to `reverse_proxy` the subdomain to the Node port. If its block is still `file_server`, the frontend loads from `public` but `/api` calls never reach Node.
