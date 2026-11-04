@@ -47,11 +47,12 @@ sequenceDiagram
     Client->>Service: GET /api/metrics
     Service-->>Client: Metric definitions
     Analyst->>Client: Choose columns and sort metric
-    Client->>Service: GET /api/screener?columns=...&sort=...
+    Client->>Service: GET /api/screener
     Service->>DB: Load watchlist and saved settings
     Service->>Market: Fetch quotes and financials
-    Service->>Service: Compute metrics and ranks
-    Service-->>Client: Screener table
+    Service->>Service: Compute metrics
+    Service-->>Client: One row per company
+    Client->>Analyst: Sort and rank on the chosen metric
     Market--)Service: Price moves
     Service--)Client: WebSocket metric update
     Client->>Analyst: Rows re-rank in place
@@ -75,11 +76,11 @@ I am going to use the required technologies in the following ways.
 - **CSS** - Styling the whole application. A dark trading-desk palette with negative values in red, an imported font, and a layout built on flexbox and grid so the screener stays readable on a phone by showing fewer metric columns. Live value changes are animated so the analyst can see what just moved.
 - **React** - The frontend becomes a single page application built from components: a login form, the navigation bar, the screener controls, the screener table, the metrics table, and a metric detail view. React Router swaps between the views. Component state drives column selection, sorting, the Values / Ranks toggle, and re-rendering rows the moment new values arrive over the WebSocket.
 - **Service** - A Node/Express backend providing these endpoints:
-  - `POST /api/auth/register`, `POST /api/auth/login`, `DELETE /api/auth/logout` for account management
+  - `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/guest`, `DELETE /api/auth/logout`, `GET /api/auth/me` for accounts and sessions
   - `GET /api/metrics` returning every metric definition with its formula, kind, grain, and coverage
-  - `GET /api/screener` returning the selected metrics for every company, sorted and ranked
+  - `GET /api/screener` returning every metric's value for each company on the user's watchlist. The browser sorts and ranks them, so a live price move can re-rank without another request.
   - `GET /api/watchlist` and `PUT /api/watchlist` for reading and updating the user's tickers and saved screener setups
-  - Third party calls to [Finnhub](https://finnhub.io/docs/api) for stock quotes and company financials, the raw fields the metrics are computed from.
+  - Third party: the About page calls [quote.cs260.click](https://quote.cs260.click) directly from the browser. [Finnhub](https://finnhub.io/docs/api) is still the planned source for stock quotes and company financials, but it needs an API key that can't be in frontend code, so it will go through the backend. Until then the screener uses sample data.
 - **DB/Login** - MongoDB stores user accounts with securely hashed passwords, each user's watchlist, and their saved screener setups. Users register and log in before reaching the screener; an unauthenticated visitor cannot load screener data or modify a watchlist.
 - **WebSocket** - As prices move, the backend recomputes the price-driven metrics and pushes the updated values to every connected client. Rows re-rank live, so all open clients see the same ordering at the same time without polling or refreshing.
 
@@ -156,14 +157,14 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
-- [ ] **Uses BCrypt to hash passwords** - I did not complete this part of the deliverable.
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - Simon Service is deployed at [simon.axontradinghouse.click](https://simon.axontradinghouse.click). The footer of every view, including the home page, links to this GitHub repository. The work is split into small commits, one step at a time.
+- [x] **Node.js/Express HTTP service** - The backend is an Express app in `service/index.js` with its own `service/package.json`, running on port 4000 under PM2. It parses JSON bodies and cookies with middleware, keeps its endpoints on a router under `/api`, and answers unknown API paths with a 404. Users and watchlists are kept in memory until the database deliverable, so a restart clears them. In development, `vite.config.js` proxies `/api` to the service.
+- [x] **Static middleware for frontend** - `express.static('public')` serves the bundled React app, which `deployService.sh` builds and copies to `public`. Any other non-API path returns `index.html`, so React Router can handle it and direct links like `/screener` work.
+- [x] **Calls to third party endpoints** - The About page calls [quote.cs260.click](https://quote.cs260.click) with `fetch` from the browser in a `useEffect` and shows the quote and author. If the call fails, a short message takes its place. Finnhub needs an API key, which can't go in frontend code, so it isn't connected yet. The Data source box on the screener still says so.
+- [x] **Backend service endpoints** - `GET /api/metrics` (public), `GET /api/screener`, `GET /api/watchlist`, and `PUT /api/watchlist`, plus the auth endpoints below. The sample metrics, company rows, and starting watchlist moved from the frontend to the service. `PUT /api/watchlist` checks every ticker and setup, rejects anything invalid with a 400, and stores only the expected fields. Each user gets their own copy of the watchlist.
+- [x] **Frontend calls service endpoints** - `src/service.js` makes every call with `fetch`, and the mocks are gone. Login, the Metrics page, the screener, saved setups, and the watchlist all use it. Failed calls show an error message, and a failed watchlist save puts the list back the way it was. Any 401 returns the user to the login page. The current screener setup (not the named ones) is still kept in localStorage until the database deliverable.
+- [x] **Supports registration, login, logout, and restricted endpoint** - `POST /api/auth/register`, `POST /api/auth/login`, and `DELETE /api/auth/logout`. Accounts are identified by email. Login sets a UUID token in a cookie that is `HttpOnly`, `Secure`, and `SameSite=Strict`, and logout ends the session on the server too. A `verifyAuth` middleware restricts `/api/screener`, `/api/watchlist`, and `/api/auth/me`, so a request without a valid token gets a 401 and no data. `GET /api/auth/me` lets the frontend check the session on load. **Continue as guest** calls `POST /api/auth/guest`, which starts a temporary session with no password and its own watchlist. It lasts up to 24 hours and is deleted on logout.
+- [x] **Uses BCrypt to hash passwords** - `bcryptjs` hashes each password when the account is created, and `bcrypt.compare` checks it at login. The plain password is never stored or sent back, and neither is the hash.
 
 ## 🚀 DB deliverable
 
