@@ -1,6 +1,5 @@
 // Calls to the backend service. The cookie that identifies the user is set by the
 // service and sent by the browser, so it never appears in this code.
-import { metrics } from './metrics/metricsData';
 import { rows } from './screener/screenerData';
 import { tickers, setups } from './watchlist/watchlistData';
 
@@ -52,9 +51,9 @@ export function getCurrentUser() {
   return request('/auth/me');
 }
 
-// GET /api/metrics: every metric and raw field definition.
-export async function getMetrics() {
-  return metrics;
+// Every metric and raw field definition.
+export function getMetrics() {
+  return request('/metrics');
 }
 
 // GET /api/screener: one row per company on the user's watchlist, with every

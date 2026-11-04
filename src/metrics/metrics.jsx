@@ -12,9 +12,12 @@ export function Metrics({ userName }) {
   const [metrics, setMetrics] = React.useState([]);
   const [query, setQuery] = React.useState('');
   const [kind, setKind] = React.useState('all');
+  const [error, setError] = React.useState('');
 
   React.useEffect(() => {
-    getMetrics().then(setMetrics);
+    getMetrics()
+      .then(setMetrics)
+      .catch((err) => setError(err.message));
   }, []);
 
   // A value matches when the text appears in its name, identifier, formula, or
@@ -91,6 +94,11 @@ export function Metrics({ userName }) {
         </fieldset>
       </form>
 
+      {error && (
+        <p className="alert alert-danger" role="alert">
+          {error}
+        </p>
+      )}
       <MetricsTable
         metrics={shown}
         total={metrics.length}
