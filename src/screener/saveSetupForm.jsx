@@ -6,11 +6,18 @@ import { NavLink } from 'react-router-dom';
 export function SaveSetupForm({ onSave }) {
   const [name, setName] = React.useState('');
   const [saved, setSaved] = React.useState(null);
+  const [error, setError] = React.useState('');
 
   async function save(event) {
     event.preventDefault();
-    setSaved(await onSave(name.trim()));
-    setName('');
+    setSaved(null);
+    setError('');
+    try {
+      setSaved(await onSave(name.trim()));
+      setName('');
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -24,6 +31,7 @@ export function SaveSetupForm({ onSave }) {
           type="text"
           id="setup-name"
           placeholder="e.g. Cash rich"
+          maxLength={100}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -31,6 +39,11 @@ export function SaveSetupForm({ onSave }) {
           Save
         </button>
       </div>
+      {error && (
+        <p className="alert alert-danger" role="alert">
+          {error}
+        </p>
+      )}
       {saved && (
         <p className="save-message" role="status">
           {saved.replaced ? 'Replaced' : 'Saved'} &ldquo;{saved.name}&rdquo;. Open it any time from your{' '}

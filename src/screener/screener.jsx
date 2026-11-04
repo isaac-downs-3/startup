@@ -18,6 +18,7 @@ export function Screener({ userName }) {
   const [filter, setFilter] = React.useState('');
   const [updates, setUpdates] = React.useState([]);
   const [paused, setPaused] = React.useState(false);
+  const [error, setError] = React.useState('');
 
   // The feed's callback reads the latest rows through a ref, so a new price
   // doesn't restart the feed.
@@ -25,9 +26,10 @@ export function Screener({ userName }) {
   rowsRef.current = rows;
 
   React.useEffect(() => {
-    getMetrics().then(setMetrics);
-    getScreener(userName).then(setRows);
-  }, [userName]);
+    const showError = (err) => setError(err.message);
+    getMetrics().then(setMetrics).catch(showError);
+    getScreener().then(setRows).catch(showError);
+  }, []);
 
   React.useEffect(() => {
     saveSetup(userName, setup);
@@ -55,14 +57,14 @@ export function Screener({ userName }) {
   // ignoring case, is replaced in place and keeps its name. Returns the saved
   // name and whether it replaced one.
   async function saveNamedSetup(name) {
-    const watchlist = await getWatchlist(userName);
+    const watchlist = await getWatchlist();
     const existing = watchlist.setups.find((s) => s.name.toLowerCase() === name.toLowerCase());
     const lastUsed = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
     const saved = { name: existing?.name ?? name, setup, lastUsed };
     const setups = existing
       ? watchlist.setups.map((s) => (s === existing ? saved : s))
       : [...watchlist.setups, saved];
-    await saveWatchlist(userName, { ...watchlist, setups });
+    await saveWatchlist({ ...watchlist, setups });
     return { name: saved.name, replaced: Boolean(existing) };
   }
 
@@ -81,6 +83,11 @@ export function Screener({ userName }) {
         <i>All values on this page are sample data for illustration only. Not investment advice.</i>
       </p>
 
+      {error && (
+        <p className="alert alert-danger" role="alert">
+          {error}
+        </p>
+      )}
       <div className="controls-column">
         <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
         <SaveSetupForm onSave={saveNamedSetup} />

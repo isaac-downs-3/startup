@@ -10,17 +10,24 @@ export function Watchlist({ userName }) {
   const [watchlist, setWatchlist] = React.useState(null);
   const tickers = watchlist?.tickers ?? [];
   const setups = watchlist?.setups ?? [];
+  const [error, setError] = React.useState('');
 
   React.useEffect(() => {
-    getMetrics().then(setMetrics);
-    getWatchlist(userName).then(setWatchlist);
-  }, [userName]);
+    const showError = (err) => setError(err.message);
+    getMetrics().then(setMetrics).catch(showError);
+    getWatchlist().then(setWatchlist).catch(showError);
+  }, []);
 
-  // Every change is shown at once and saved for the user.
+  // Every change is shown at once and saved for the user. If the save fails, say so
+  // and go back to what the service has.
   function update(changes) {
     const next = { ...watchlist, ...changes };
     setWatchlist(next);
-    saveWatchlist(userName, next);
+    setError('');
+    saveWatchlist(next).catch((err) => {
+      setError(err.message);
+      setWatchlist(watchlist);
+    });
   }
 
   function addTicker(ticker) {
@@ -54,6 +61,11 @@ export function Watchlist({ userName }) {
         other ticker shows dashes in the screener until Finnhub is connected.
       </p>
 
+      {error && (
+        <p className="alert alert-danger" role="alert">
+          {error}
+        </p>
+      )}
       <SavedTickers
         userName={userName}
         tickers={tickers}
