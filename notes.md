@@ -278,7 +278,7 @@ Development strategies try to protect the integrity of the program while being a
 
 Simon now has a third layer: MongoDB Atlas behind the Express service. `database.js` wraps the collections (`user`, `score`) so `index.js` calls `getUser`, `addUser`, `addScore`, `getHighScores` instead of touching in-memory arrays. Users and scores now survive a `pm2 restart`.
 
-`dbConfig.json` holds just the cluster host (e.g. `cluster0.xxxx.mongodb.net`), not the full connection string Atlas shows. The code builds `mongodb+srv://user:pass@host` itself, so pasting the whole string into `hostname` breaks the URL.
+`dbConfig.json` holds just the cluster host (e.g. `cluster0.xxxx.mongodb.net`), not the full connection string Atlas shows. The code builds `mongodb+srv://<user>:<password>@<host>` itself, so pasting the whole string into `hostname` breaks the URL.
 
 `dbConfig.json` sits next to `database.js` in `service/` and is in `.gitignore`. `deployService.sh` copies `service/*.json`, so it reaches production without being committed.
 
