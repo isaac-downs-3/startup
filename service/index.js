@@ -122,6 +122,22 @@ apiRouter.get('/screener', verifyAuth, async (req, res) => {
   res.send(tickers.map(({ ticker }) => rowFor(ticker)));
 });
 
+// The screener's current setup, so it opens the way the user left it on any device.
+// An empty object means the user hasn't changed it, and the frontend uses its default.
+apiRouter.get('/screener/setup', verifyAuth, async (req, res) => {
+  res.send((await DB.getCurrentSetup(req.user._id)) ?? {});
+});
+
+apiRouter.put('/screener/setup', verifyAuth, async (req, res) => {
+  if (!isSetup(req.body)) {
+    res.status(400).send({ msg: 'That is not a valid screener setup' });
+    return;
+  }
+  const setup = cleanSetup(req.body);
+  await DB.saveCurrentSetup(req.user._id, setup);
+  res.send(setup);
+});
+
 // The user's saved tickers and screener setups.
 apiRouter.get('/watchlist', verifyAuth, async (req, res) => {
   res.send(await watchlistFor(req.user));
@@ -200,11 +216,7 @@ function readWatchlist(body) {
   if (new Set(tickers.map((t) => t.ticker)).size !== tickers.length) return null;
   return {
     tickers: tickers.map(({ ticker, added }) => ({ ticker, added })),
-    setups: setups.map(({ name, setup, lastUsed }) => ({
-      name,
-      setup: { columns: setup.columns, sort: setup.sort, order: setup.order, view: setup.view },
-      lastUsed,
-    })),
+    setups: setups.map(({ name, setup, lastUsed }) => ({ name, setup: cleanSetup(setup), lastUsed })),
   };
 }
 
@@ -217,10 +229,12 @@ function isSavedTicker(entry) {
 }
 
 function isSavedSetup(entry) {
-  const setup = entry?.setup;
+  return isShortText(entry?.name) && isShortText(entry?.lastUsed) && isSetup(entry?.setup);
+}
+
+// The screener's columns, sort, and view, as the current setup or inside a saved one.
+function isSetup(setup) {
   return (
-    isShortText(entry?.name) &&
-    isShortText(entry?.lastUsed) &&
     Array.isArray(setup?.columns) &&
     setup.columns.length <= 100 &&
     setup.columns.every(isShortText) &&
@@ -228,6 +242,11 @@ function isSavedSetup(entry) {
     ['asc', 'desc'].includes(setup.order) &&
     ['values', 'ranks'].includes(setup.view)
   );
+}
+
+// Only the expected fields, so nothing extra in a request gets stored.
+function cleanSetup({ columns, sort, order, view }) {
+  return { columns, sort, order, view };
 }
 
 // Each user gets their own copy, so one user's changes never reach another's.

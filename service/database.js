@@ -91,6 +91,17 @@ function saveWatchlist(userId, { tickers, setups }) {
   return watchlistCollection.updateOne({ userId }, { $set: { tickers, setups } }, { upsert: true });
 }
 
+// The screener's current setup lives on the watchlist document, apart from the
+// named setups. Null if the user hasn't changed the screener yet.
+async function getCurrentSetup(userId) {
+  const doc = await watchlistCollection.findOne({ userId }, { projection: { _id: 0, currentSetup: 1 } });
+  return doc?.currentSetup ?? null;
+}
+
+function saveCurrentSetup(userId, setup) {
+  return watchlistCollection.updateOne({ userId }, { $set: { currentSetup: setup } }, { upsert: true });
+}
+
 module.exports = {
   getAccount,
   getUserByToken,
@@ -100,4 +111,6 @@ module.exports = {
   deleteUser,
   getWatchlist,
   saveWatchlist,
+  getCurrentSetup,
+  saveCurrentSetup,
 };
