@@ -80,6 +80,7 @@ I am going to use the required technologies in the following ways.
   - `GET /api/metrics` returning every metric definition with its formula, kind, grain, and coverage
   - `GET /api/screener` returning every metric's value for each company on the user's watchlist. The browser sorts and ranks them, so a live price move can re-rank without another request.
   - `GET /api/watchlist` and `PUT /api/watchlist` for reading and updating the user's tickers and saved screener setups
+  - `GET /api/screener/setup` and `PUT /api/screener/setup` for the screener's current columns, sort, and view
   - Third party: the About page calls [quote.cs260.click](https://quote.cs260.click) directly from the browser. [Finnhub](https://finnhub.io/docs/api) is still the planned source for stock quotes and company financials, but it needs an API key that can't be in frontend code, so it will go through the backend. Until then the screener uses sample data.
 - **DB/Login** - MongoDB stores user accounts with securely hashed passwords, each user's watchlist, and their saved screener setups. Users register and log in before reaching the screener; an unauthenticated visitor cannot load screener data or modify a watchlist.
 - **WebSocket** - As prices move, the backend recomputes the price-driven metrics and pushes the updated values to every connected client. Rows re-rank live, so all open clients see the same ordering at the same time without polling or refreshing.
@@ -170,9 +171,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
+- [x] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits) - Simon DB is deployed at [simon.axontradinghouse.click](https://simon.axontradinghouse.click) with my own `dbConfig.json` credentials. The footer of every view, including the home page, links to this GitHub repository. The work is split into small commits, one step at a time, and `notes.md` has what I learned.
+- [x] **Stores data in MongoDB** - The service connects to MongoDB Atlas in `service/database.js`. It pings the database at startup and stops if the connection fails. Each user's application data is kept in a `watchlist` collection, one document per user: their saved tickers, their named screener setups, and the screener's current setup. `GET /api/watchlist`, `PUT /api/watchlist`, and `GET /api/screener` read and write that collection, and the new `GET /api/screener/setup` and `PUT /api/screener/setup` store the current setup, which used to live in the browser's localStorage. So the screener opens the way the user left it on any device. Nothing is kept in the service's memory anymore, so a restart loses nothing. I tested this by restarting the service in production and confirming the session and the edited watchlist were still there. Guests get their own watchlist document too, and a TTL index makes MongoDB delete it, along with the guest, when the guest session expires.
+- [x] **Stores credentials in MongoDB** - Accounts are stored in a `user` collection: the email, the bcrypt hash of the password, and the current login token. The password itself is never stored. Registering inserts the user, logging in reads the hash back to check the password and stores a new token, and logging out removes the token. `verifyAuth` looks the token up in MongoDB on every restricted request, so `/api/screener`, `/api/screener/setup`, `/api/watchlist`, and `/api/auth/me` return a 401 without a valid session. A unique index on the email means two accounts can never share one, even if two registrations arrive at the same moment. The token must be a string before it is used in a query, so a crafted cookie can't turn into a MongoDB query that matches any session.
 
 ## 🚀 WebSocket deliverable
 
