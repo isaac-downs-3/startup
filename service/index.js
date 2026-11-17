@@ -19,10 +19,6 @@ const guestLifetimeMs = 1000 * 60 * 60 * 24;
 // What a guest is shown as. It isn't a valid email, so no account can have it.
 const guestName = 'Guest';
 
-// Users and their watchlists live in memory, so a restart loses them until the
-// database deliverable.
-let users = [];
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -37,10 +33,20 @@ apiRouter.post('/auth/register', async (req, res) => {
   const credentials = readCredentials(req.body);
   if (!credentials) {
     res.status(400).send({ msg: 'A valid email and a password are required' });
-  } else if (findAccount(credentials.email)) {
-    res.status(409).send({ msg: `${credentials.email} already has an account. Log in instead.` });
+  } else if (await DB.getAccount(credentials.email)) {
+    res.status(409).send({ msg: alreadyRegistered(credentials.email) });
   } else {
-    const user = await createUser(credentials);
+    let user;
+    try {
+      user = await createUser(credentials);
+    } catch (err) {
+      // Another registration for this email got in first, and the unique index caught it.
+      if (err.code === 11000) {
+        res.status(409).send({ msg: alreadyRegistered(credentials.email) });
+        return;
+      }
+      throw err;
+    }
     setAuthCookie(res, user.token);
     res.send(publicUser(user));
   }
@@ -53,10 +59,11 @@ apiRouter.post('/auth/login', async (req, res) => {
     res.status(400).send({ msg: 'A valid email and a password are required' });
     return;
   }
-  const user = findAccount(credentials.email);
+  const user = await DB.getAccount(credentials.email);
   if (user && (await bcrypt.compare(credentials.password, user.passwordHash))) {
-    user.token = uuid.v4();
-    setAuthCookie(res, user.token);
+    const token = uuid.v4();
+    await DB.setToken(user._id, token);
+    setAuthCookie(res, token);
     res.send(publicUser(user));
   } else {
     res.status(401).send({ msg: 'Wrong email or password' });
@@ -64,35 +71,32 @@ apiRouter.post('/auth/login', async (req, res) => {
 });
 
 // Start a temporary session with no account. Every guest gets their own watchlist.
-apiRouter.post('/auth/guest', (_req, res) => {
-  users = users.filter((user) => !isExpiredGuest(user));
-  const user = {
-    email: guestName,
-    token: uuid.v4(),
-    watchlist: sampleWatchlist(),
-    guestUntil: Date.now() + guestLifetimeMs,
-  };
-  users.push(user);
+// The database's TTL index deletes the guest and their watchlist once guestUntil passes.
+apiRouter.post('/auth/guest', async (_req, res) => {
+  const user = await DB.addUser(
+    { email: guestName, token: uuid.v4(), guestUntil: new Date(Date.now() + guestLifetimeMs) },
+    sampleWatchlist()
+  );
   setAuthCookie(res, user.token, guestLifetimeMs);
   res.send(publicUser(user));
 });
 
 // Log out, ending the session on the server as well as clearing the cookie. A
 // guest has no account to come back to, so their data goes too.
-apiRouter.delete('/auth/logout', (req, res) => {
-  const user = findByToken(req.cookies[authCookieName]);
+apiRouter.delete('/auth/logout', async (req, res) => {
+  const user = await findByToken(req.cookies[authCookieName]);
   if (user?.guestUntil) {
-    users = users.filter((other) => other !== user);
+    await DB.deleteUser(user._id);
   } else if (user) {
-    delete user.token;
+    await DB.clearToken(user._id);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
 });
 
 // Only continue if the request's cookie belongs to a signed-in user.
-function verifyAuth(req, res, next) {
-  const user = findByToken(req.cookies[authCookieName]);
+async function verifyAuth(req, res, next) {
+  const user = await findByToken(req.cookies[authCookieName]);
   if (user) {
     req.user = user;
     next();
@@ -113,23 +117,24 @@ apiRouter.get('/metrics', (_req, res) => {
 
 // One row per company on the user's watchlist, with every metric's value. The
 // frontend sorts and ranks them, because the price feed re-ranks them in the browser.
-apiRouter.get('/screener', verifyAuth, (req, res) => {
-  res.send(req.user.watchlist.tickers.map(({ ticker }) => rowFor(ticker)));
+apiRouter.get('/screener', verifyAuth, async (req, res) => {
+  const { tickers } = await watchlistFor(req.user);
+  res.send(tickers.map(({ ticker }) => rowFor(ticker)));
 });
 
 // The user's saved tickers and screener setups.
-apiRouter.get('/watchlist', verifyAuth, (req, res) => {
-  res.send(req.user.watchlist);
+apiRouter.get('/watchlist', verifyAuth, async (req, res) => {
+  res.send(await watchlistFor(req.user));
 });
 
 // Replace the user's saved tickers and screener setups.
-apiRouter.put('/watchlist', verifyAuth, (req, res) => {
+apiRouter.put('/watchlist', verifyAuth, async (req, res) => {
   const watchlist = readWatchlist(req.body);
   if (!watchlist) {
     res.status(400).send({ msg: 'That is not a valid watchlist' });
     return;
   }
-  req.user.watchlist = watchlist;
+  await DB.saveWatchlist(req.user._id, watchlist);
   res.send(watchlist);
 });
 
@@ -161,15 +166,19 @@ function readCredentials(body) {
   return { email, password };
 }
 
+// Only the bcrypt hash is stored, never the password itself.
 async function createUser({ email, password }) {
-  const user = {
-    email,
-    passwordHash: await bcrypt.hash(password, 10),
-    token: uuid.v4(),
-    watchlist: sampleWatchlist(),
-  };
-  users.push(user);
-  return user;
+  const user = { email, passwordHash: await bcrypt.hash(password, 10), token: uuid.v4() };
+  return DB.addUser(user, sampleWatchlist());
+}
+
+function alreadyRegistered(email) {
+  return `${email} already has an account. Log in instead.`;
+}
+
+// A user whose watchlist is missing starts from the sample one rather than failing.
+async function watchlistFor(user) {
+  return (await DB.getWatchlist(user._id)) ?? sampleWatchlist();
 }
 
 // A ticker the sample data doesn't cover gets a row of dashes that say why.
@@ -226,18 +235,16 @@ function sampleWatchlist() {
   return structuredClone({ tickers, setups });
 }
 
-// Guests have no password, so they can never be logged in to.
-function findAccount(email) {
-  return users.find((user) => user.email === email && user.passwordHash);
-}
-
-function findByToken(token) {
-  const user = token ? users.find((user) => user.token === token) : undefined;
+// Mongo's TTL cleanup runs about once a minute, so an expired guest can still be in
+// the database briefly. Checking guestUntil here ends the session on time anyway.
+async function findByToken(token) {
+  if (typeof token !== 'string' || !token) return undefined;
+  const user = await DB.getUserByToken(token);
   return user && !isExpiredGuest(user) ? user : undefined;
 }
 
 function isExpiredGuest(user) {
-  return user.guestUntil !== undefined && user.guestUntil <= Date.now();
+  return user.guestUntil !== undefined && user.guestUntil <= new Date();
 }
 
 // What the frontend may see of a user. Never the hash or the token.
