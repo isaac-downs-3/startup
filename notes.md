@@ -286,3 +286,26 @@ On startup the service runs `db.command({ ping: 1 })` and exits if it fails, so 
 
 `getHighScores` pushes the work to Mongo: a `find` with a range query, `sort: { score: -1 }` and `limit: 10`, then `toArray()` because `find` returns a cursor.
 
+## Adding the database to my startup
+
+Add `dbConfig.json` to `.gitignore` before the file exists in the repo, and confirm with `git check-ignore -v service/dbConfig.json`. Once a file is tracked, `.gitignore` no longer protects it. I also added a check to `check-main.sh` that blocks a tracked `dbConfig.json` or a `mongodb+srv://` URL with a real password in it. Never log the connection URL, because it contains the password. Log only the hostname.
+
+I kept credentials and app data in separate collections: `user` holds the email, bcrypt hash and session token, and `watchlist` holds the tickers, saved setups and the screener's current setup, keyed by the user's `_id`.
+
+Indexes do work that the code used to do by hand:
+- A unique index on `email` stops two accounts sharing an email even if two registrations race, which a "check, then insert" can't. It's a partial index (`partialFilterExpression: { passwordHash: { $exists: true } }`) because every guest has the email "Guest". A duplicate throws error code `11000`, which I turn into the same 409 as the normal check.
+- A TTL index (`expireAfterSeconds: 0` on a `Date` field) makes Mongo delete expired guests by itself. The cleanup only runs about once a minute, so the code still checks `guestUntil` before trusting a guest's session. The field has to be a `Date`, not a number from `Date.now()`, or TTL ignores it.
+- `createIndex` does nothing if the index already exists, so it's safe to call on every start.
+
+cookie-parser turns a cookie value that starts with `j:` into a parsed JSON object. Passed straight into `findOne({ token })`, a cookie of `j:{"$ne":null}` becomes a Mongo query that matches any session. Check that the token is a string before using it in a query.
+
+Express 5 passes a rejected promise from an `async` handler or middleware to the error handler, so `verifyAuth` could become `async` without extra try/catch.
+
+Use a `projection` to return only the fields the frontend needs, so internal fields like `_id` and `userId` never leave the server.
+
+Moving the screener setup from localStorage to the service made reads and writes asynchronous, and that broke two assumptions:
+- The screener used to read the setup synchronously in `useState`. Now the setup starts as `null` and the controls render once it loads. Otherwise the default flashes, and the save effect writes the default over the user's real setup. A ref holds the last loaded or saved value so loading doesn't trigger a save.
+- Clicking a saved setup's link used to save and navigate at the same moment. With a network save, the screener could load before the save landed. Now the click waits for the save, then calls `navigate`.
+
+To test persistence, restart the process (`pm2 restart startup` on the server) and check that the old cookie still works and the data is still there. That's the difference between memory and a database.
+
