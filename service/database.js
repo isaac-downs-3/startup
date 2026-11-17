@@ -45,4 +45,59 @@ async function createIndexes() {
   await watchlistCollection.createIndex({ userId: 1 }, { unique: true });
 }
 
-module.exports = {};
+// Guests have no password hash, so an email lookup only ever finds a real account.
+function getAccount(email) {
+  return userCollection.findOne({ email, passwordHash: { $exists: true } });
+}
+
+function getUserByToken(token) {
+  return userCollection.findOne({ token });
+}
+
+// Adds the user and their starting watchlist. Returns the user with its new _id.
+// A guest's watchlist gets the same guestUntil, so the TTL index removes both.
+async function addUser(user, watchlist) {
+  const { insertedId } = await userCollection.insertOne(user);
+  const { tickers, setups } = watchlist;
+  await watchlistCollection.insertOne({
+    userId: insertedId,
+    tickers,
+    setups,
+    ...(user.guestUntil && { guestUntil: user.guestUntil }),
+  });
+  return { ...user, _id: insertedId };
+}
+
+function setToken(userId, token) {
+  return userCollection.updateOne({ _id: userId }, { $set: { token } });
+}
+
+function clearToken(userId) {
+  return userCollection.updateOne({ _id: userId }, { $unset: { token: '' } });
+}
+
+async function deleteUser(userId) {
+  await watchlistCollection.deleteOne({ userId });
+  await userCollection.deleteOne({ _id: userId });
+}
+
+// Only the fields the frontend uses: no _id, userId, or guestUntil.
+function getWatchlist(userId) {
+  return watchlistCollection.findOne({ userId }, { projection: { _id: 0, tickers: 1, setups: 1 } });
+}
+
+// Upsert, so a user whose watchlist is somehow missing gets one instead of an error.
+function saveWatchlist(userId, { tickers, setups }) {
+  return watchlistCollection.updateOne({ userId }, { $set: { tickers, setups } }, { upsert: true });
+}
+
+module.exports = {
+  getAccount,
+  getUserByToken,
+  addUser,
+  setToken,
+  clearToken,
+  deleteUser,
+  getWatchlist,
+  saveWatchlist,
+};
