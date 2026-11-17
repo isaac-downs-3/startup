@@ -269,3 +269,20 @@ Users are in memory, so restarting the service ends every session while the brow
 An `HttpOnly` cookie can't be read by JavaScript, which is the point. `document.cookie` doesn't show it, and the browser sends it by itself on same-origin `fetch` calls.
 
 Calling a third party from the browser needs an API that allows CORS and doesn't need a key, because anything in the frontend bundle is public. `quote.cs260.click` works. Finnhub allows CORS but needs a key, so it has to go through the backend later, with the key kept outside the deploy folder.
+
+## Storage Services
+
+Development strategies try to protect the integrity of the program while being able to update. Separate development and production. 
+
+## Simon DB
+
+Simon now has a third layer: MongoDB Atlas behind the Express service. `database.js` wraps the collections (`user`, `score`) so `index.js` calls `getUser`, `addUser`, `addScore`, `getHighScores` instead of touching in-memory arrays. Users and scores now survive a `pm2 restart`.
+
+`dbConfig.json` holds just the cluster host (e.g. `cluster0.xxxx.mongodb.net`), not the full connection string Atlas shows. The code builds `mongodb+srv://user:pass@host` itself, so pasting the whole string into `hostname` breaks the URL.
+
+`dbConfig.json` sits next to `database.js` in `service/` and is in `.gitignore`. `deployService.sh` copies `service/*.json`, so it reaches production without being committed.
+
+On startup the service runs `db.command({ ping: 1 })` and exits if it fails, so a bad config shows up immediately in the PM2 logs instead of on the first request. Atlas network access has to allow the server's IP (I allowed anywhere, per the course).
+
+`getHighScores` pushes the work to Mongo: a `find` with a range query, `sort: { score: -1 }` and `limit: 10`, then `toArray()` because `find` returns a cursor.
+
