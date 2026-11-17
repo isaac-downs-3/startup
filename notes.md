@@ -309,3 +309,26 @@ Moving the screener setup from localStorage to the service made reads and writes
 
 To test persistence, restart the process (`pm2 restart startup` on the server) and check that the old cookie still works and the data is still there. That's the difference between memory and a database.
 
+## Deploying with the database
+
+`deployService.sh` builds from my working folder, not from GitHub. Anything uncommitted goes live too, so commit first and make sure `git status` is clean before deploying.
+
+It copies `service/*.js` and `service/*.json`, which is how the gitignored `dbConfig.json` reaches the server. It also deletes `services/startup` on the server first, so the config has to be in my local `service/` folder on every deploy. After deploying, `ls services/startup` on the server should show `database.js` and `dbConfig.json`.
+
+The script runs `npm install` in the project root before building, which can rewrite `package-lock.json` (it added and removed `"peer": true` flags for me). Check `git status` after a deploy before assuming a lockfile change is mine.
+
+Atlas only accepts connections from IPs allowed under Network Access. If the server's IP isn't allowed, the startup ping fails and the service exits, so PM2 shows it restarting over and over (the ↺ column keeps going up).
+
+Over a plain `ssh` command, `pm2` and `node` aren't on the PATH because they're set up in the interactive shell. `ssh ... 'bash -ic "pm2 restart startup"'` works. The logs can be read without PM2: `~/.pm2/logs/startup-out.log` and `~/.pm2/logs/startup-error.log`.
+
+After a deploy I check:
+- The out log says "Connected to the database" and the error log is empty.
+- The site loads, and an API call without a cookie gets a 401.
+- Registering, saving a change, logging out, and logging back in all work.
+- After `pm2 restart startup`, the old cookie still works and the change is still there.
+- Test accounts are deleted from Atlas afterward.
+
+The auth cookie's `secure` flag works in production because PM2 has no `NODE_ENV` set, so it defaults to secure, and the site is served over HTTPS by Caddy. Locally I set `NODE_ENV=development` so the cookie works over plain `http://localhost`.
+
+Simon and the startup are separate PM2 processes (`simon` on 3000, `startup` on 4000) on the same server. Deploying one restarts only that one, but both use the same Atlas cluster, so they use different database names (`simon` and `startup`).
+
