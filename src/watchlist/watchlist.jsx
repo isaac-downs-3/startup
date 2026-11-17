@@ -1,10 +1,11 @@
 import React from 'react';
 import './watchlist.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { getMetrics, getWatchlist, saveWatchlist } from '../service';
 import { saveSetup } from '../screener/setupStore';
 
 export function Watchlist({ userName }) {
+  const navigate = useNavigate();
   const [metrics, setMetrics] = React.useState([]);
   // Null until it loads, so nothing can save over it before then.
   const [watchlist, setWatchlist] = React.useState(null);
@@ -40,12 +41,17 @@ export function Watchlist({ userName }) {
     update({ tickers: tickers.filter((t) => t.ticker !== ticker) });
   }
 
-  // Opening a saved setup makes it the screener's current setup. Its link then
-  // goes to the screener.
-  function openSetup(name) {
+  // Opening a saved setup makes it the screener's current setup, then goes to the
+  // screener once that is saved, so the screener loads the right one.
+  async function openSetup(name) {
     const saved = setups.find((s) => s.name === name);
-    saveSetup(userName, saved.setup);
     update({ setups: setups.map((s) => (s.name === name ? { ...s, lastUsed: today() } : s)) });
+    try {
+      await saveSetup(saved.setup);
+      navigate('/screener');
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   function deleteSetup(name) {
@@ -189,7 +195,13 @@ function SavedSetups({ userName, setups, metrics, onOpen, onDelete }) {
             {setups.map(({ name, setup, lastUsed }) => (
               <tr key={name}>
                 <th scope="row">
-                  <NavLink to="/screener" onClick={() => onOpen(name)}>
+                  <NavLink
+                    to="/screener"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onOpen(name);
+                    }}
+                  >
                     {name}
                   </NavLink>
                 </th>

@@ -59,6 +59,15 @@ export function getScreener() {
   return request('/screener');
 }
 
+// The screener's current setup, or an empty object if the user hasn't changed it.
+export function getScreenerSetup() {
+  return request('/screener/setup');
+}
+
+export function saveScreenerSetup(setup) {
+  return request('/screener/setup', { method: 'PUT', body: setup });
+}
+
 // The user's saved tickers and screener setups.
 export function getWatchlist() {
   return request('/watchlist');

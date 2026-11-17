@@ -7,14 +7,15 @@ import { DataSource } from './dataSource';
 import { ScreenerTable } from './screenerTable';
 import { LiveUpdates } from './liveUpdates';
 import { getMetrics, getScreener, getWatchlist, saveWatchlist } from '../service';
-import { readSetup, saveSetup } from './setupStore';
+import { defaultSetup, readSetup, saveSetup } from './setupStore';
 import { describeMove, repriceRow, startPriceFeed } from './priceFeed';
 
 // The screener loads its data once and passes it down to the parts that show it.
-export function Screener({ userName }) {
+export function Screener() {
   const [metrics, setMetrics] = React.useState([]);
   const [rows, setRows] = React.useState([]);
-  const [setup, setSetup] = React.useState(() => readSetup(userName));
+  // Null until the saved setup loads, so the default never flashes or saves over it.
+  const [setup, setSetup] = React.useState(null);
   const [filter, setFilter] = React.useState('');
   const [updates, setUpdates] = React.useState([]);
   const [paused, setPaused] = React.useState(false);
@@ -25,15 +26,31 @@ export function Screener({ userName }) {
   const rowsRef = React.useRef(rows);
   rowsRef.current = rows;
 
+  // The setup as the service last had it, so loading it doesn't save it straight back.
+  const savedSetup = React.useRef(null);
+
   React.useEffect(() => {
     const showError = (err) => setError(err.message);
     getMetrics().then(setMetrics).catch(showError);
     getScreener().then(setRows).catch(showError);
+    // If the saved setup can't load, start from the default so the screener still works.
+    readSetup()
+      .catch((err) => {
+        showError(err);
+        return defaultSetup;
+      })
+      .then((loaded) => {
+        savedSetup.current = loaded;
+        setSetup(loaded);
+      });
   }, []);
 
+  // Save each change the user makes to the setup.
   React.useEffect(() => {
-    saveSetup(userName, setup);
-  }, [userName, setup]);
+    if (!setup || setup === savedSetup.current) return;
+    savedSetup.current = setup;
+    saveSetup(setup).catch((err) => setError(err.message));
+  }, [setup]);
 
   // Once the rows are loaded, start the simulated price feed, and stop it when
   // it is paused or the screener closes. Resuming starts it from the current prices. Each new price recomputes that company's price-driven
@@ -88,19 +105,23 @@ export function Screener({ userName }) {
           {error}
         </p>
       )}
-      <div className="controls-column">
-        <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
-        <SaveSetupForm onSave={saveNamedSetup} />
-      </div>
+      {setup && (
+        <div className="controls-column">
+          <ScreenerControls metrics={metrics} setup={setup} onChange={setSetup} filter={filter} onFilter={setFilter} />
+          <SaveSetupForm onSave={saveNamedSetup} />
+        </div>
+      )}
       <DataSource />
-      <ScreenerTable
-        metrics={metrics}
-        setup={setup}
-        onChange={setSetup}
-        rows={rows}
-        filter={filter}
-        lastMove={updates[0]}
-      />
+      {setup && (
+        <ScreenerTable
+          metrics={metrics}
+          setup={setup}
+          onChange={setSetup}
+          rows={rows}
+          filter={filter}
+          lastMove={updates[0]}
+        />
+      )}
       <LiveUpdates updates={updates} paused={paused} onPause={() => setPaused((p) => !p)} />
     </main>
   );

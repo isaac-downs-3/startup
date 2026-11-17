@@ -14,11 +14,21 @@ export function Metrics({ userName }) {
   const [kind, setKind] = React.useState('all');
   const [error, setError] = React.useState('');
 
+  // The columns already on a signed-in user's screener, so their rows can say so.
+  const [inScreener, setInScreener] = React.useState([]);
+
   React.useEffect(() => {
     getMetrics()
       .then(setMetrics)
       .catch((err) => setError(err.message));
   }, []);
+
+  React.useEffect(() => {
+    if (!userName) return;
+    readSetup()
+      .then((setup) => setInScreener(setup.columns))
+      .catch((err) => setError(err.message));
+  }, [userName]);
 
   // A value matches when the text appears in its name, identifier, formula, or
   // the raw fields it reads, so "revenue" also finds every metric built on revenue.
@@ -29,12 +39,16 @@ export function Metrics({ userName }) {
       [m.name, m.id, m.formula ?? '', ...(m.reads ?? [])].some((t) => t.toLowerCase().includes(text))
   );
 
-  // A signed-in user can add any computed metric to their screener's columns.
-  const inScreener = userName ? readSetup(userName).columns : [];
-  function addToScreener(id) {
-    const setup = readSetup(userName);
-    saveSetup(userName, { ...setup, columns: [...setup.columns, id] });
-    navigate('/screener');
+  // A signed-in user can add any computed metric to their screener's columns. The
+  // screener opens once the change is saved, so it loads with the new column.
+  async function addToScreener(id) {
+    try {
+      const setup = await readSetup();
+      await saveSetup({ ...setup, columns: [...setup.columns, id] });
+      navigate('/screener');
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
