@@ -4,7 +4,7 @@
 let onSignedOut = () => {};
 
 // App registers what to do when the service says the session is no longer valid,
-// such as after a restart, which loses the in-memory sessions.
+// such as after logging out in another tab or when a guest session expires.
 export function setSignedOutHandler(handler) {
   onSignedOut = handler;
 }
